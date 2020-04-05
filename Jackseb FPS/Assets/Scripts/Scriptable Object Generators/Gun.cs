@@ -24,6 +24,7 @@ namespace Com.Jackseb.FPS
 		[Range(0, 1)] public float weaponFOV;
 		public AudioClip gunshotSound;
 		public AudioClip reloadSound;
+		public AudioClip finishReloadSound;
 		public float pitchRandomization;
 		public GameObject prefab;
 		public GameObject displayPrefab;

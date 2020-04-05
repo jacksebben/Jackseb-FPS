@@ -472,6 +472,7 @@ MonoBehaviour:
     m_Bits: 2355
   sfx: {fileID: 3202653730900408649}
   hitmarkerSound: {fileID: 8300000, guid: 2573b0fa140aa884c9d0d77f444b5306, type: 3}
+  equipSound: {fileID: 8300000, guid: 521ddd6c37cf83d49949369081fd6f1d, type: 3}
   isAiming: 0
 --- !u!114 &-89469954322888530
 MonoBehaviour:

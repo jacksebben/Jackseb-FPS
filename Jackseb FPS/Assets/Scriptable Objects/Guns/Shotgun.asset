@@ -29,6 +29,7 @@ MonoBehaviour:
   weaponFOV: 0.45
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
   reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
   pitchRandomization: 0.1
   prefab: {fileID: 7269680795320770078, guid: a47e2b43d3837b04c815cdef5af35540, type: 3}
   displayPrefab: {fileID: 678747921519535385, guid: 650583e1ef69ddf4cb3029f800c21e98,

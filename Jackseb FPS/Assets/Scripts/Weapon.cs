@@ -17,6 +17,7 @@ namespace Com.Jackseb.FPS
 		public LayerMask canBeShot;
 		public AudioSource sfx;
 		public AudioClip hitmarkerSound;
+		public AudioClip equipSound;
 		public bool isAiming = false;
 
 		private float currentCooldown;
@@ -135,33 +136,43 @@ namespace Com.Jackseb.FPS
 			currentGunData.Reload();
 			currentWeapon.SetActive(true);
 			isReloading = false;
+
+			// Sound
+			sfx.clip = currentGunData.finishReloadSound;
+			sfx.Play();
 		}
 
 		[PunRPC]
 		void Equip(int p_ind)
 		{
-			if (currentWeapon != null)
+			if (currentIndex != p_ind)
 			{
-				if (isReloading)
+				if (currentWeapon != null)
 				{
-					StopCoroutine(lastReload);
-					isReloading = false;
+					if (isReloading)
+					{
+						StopCoroutine(lastReload);
+						isReloading = false;
+					}
+					Destroy(currentWeapon);
 				}
-				Destroy(currentWeapon);
+
+				currentIndex = p_ind;
+
+				GameObject t_newWeapon = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
+				t_newWeapon.transform.localPosition = Vector3.zero;
+				t_newWeapon.transform.localEulerAngles = Vector3.zero;
+				t_newWeapon.GetComponent<Sway>().isMine = photonView.IsMine;
+
+				if (photonView.IsMine) ChangeLayersRecursively(t_newWeapon, 10);
+				else ChangeLayersRecursively(t_newWeapon, 0);
+
+				currentWeapon = t_newWeapon;
+				currentGunData = loadout[p_ind];
+
+				// Sound
+				sfx.PlayOneShot(equipSound);
 			}
-
-			currentIndex = p_ind;
-
-			GameObject t_newWeapon = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
-			t_newWeapon.transform.localPosition = Vector3.zero;
-			t_newWeapon.transform.localEulerAngles = Vector3.zero;
-			t_newWeapon.GetComponent<Sway>().isMine = photonView.IsMine;
-
-			if (photonView.IsMine) ChangeLayersRecursively(t_newWeapon, 10);
-			else ChangeLayersRecursively(t_newWeapon, 0);
-
-			currentWeapon = t_newWeapon;
-			currentGunData = loadout[p_ind];
 		}
 
 		[PunRPC]
@@ -283,10 +294,6 @@ namespace Com.Jackseb.FPS
 
 				p_text.text = t_clip.ToString("00") + " / " + t_stash.ToString("00");
 				p_textFrame.text = t_clip.ToString("00") + " / " + t_stash.ToString("00");
-			}
-			else
-			{
-
 			}
 		}
 

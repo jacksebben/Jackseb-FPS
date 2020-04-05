@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using PhotonHash = ExitGames.Client.Photon.Hashtable;
 
 namespace Com.Jackseb.FPS
 {
@@ -59,14 +60,17 @@ namespace Com.Jackseb.FPS
 
 		public GameObject tabMain;
 		public GameObject tabRooms;
+		public GameObject tabCreate;
 
 		public GameObject buttonRoomPrefab;
 
-		public GameObject buttonAnchor;
 		public GameObject connectingText;
 		public GameObject versionText;
 
 		public InputField usernameField;
+		public InputField roomNameField;
+		public Slider maxPlayerSlider;
+		public Text maxPlayerValue;
 		public static ProfileData myProfile = new ProfileData();
 
 		private List<RoomInfo> roomList;
@@ -76,7 +80,6 @@ namespace Com.Jackseb.FPS
 			TabCloseAll();
 
 			connectingText.SetActive(true);
-			buttonAnchor.SetActive(false);
 			versionText.SetActive(false);
 
 			PhotonNetwork.AutomaticallySyncScene = true;
@@ -95,7 +98,6 @@ namespace Com.Jackseb.FPS
 		public override void OnConnectedToMaster()
 		{
 			connectingText.SetActive(false);
-			buttonAnchor.SetActive(true);
 			versionText.SetActive(true);
 
 			TabOpenMain();
@@ -128,7 +130,6 @@ namespace Com.Jackseb.FPS
 		public void Join()
 		{
 			connectingText.SetActive(true);
-			buttonAnchor.SetActive(false);
 			versionText.SetActive(false);
 
 			TabCloseAll();
@@ -139,20 +140,34 @@ namespace Com.Jackseb.FPS
 		public void Create()
 		{
 			connectingText.SetActive(true);
-			buttonAnchor.SetActive(false);
 			versionText.SetActive(false);
 
 			TabCloseAll();
 
 			RoomOptions options = new RoomOptions();
-			options.MaxPlayers = 10;
+			options.MaxPlayers = (byte)maxPlayerSlider.value;
 
-			PhotonNetwork.CreateRoom("", options);
+			PhotonHash properties = new PhotonHash();
+			properties.Add("map", 0);
+			options.CustomRoomProperties = properties;
+
+			PhotonNetwork.CreateRoom(roomNameField.text, options);
+		}
+
+		public void ChangeMap()
+		{
+
+		}
+
+		public void ChangeMaxPlayerSlider(float p_value)
+		{
+			maxPlayerValue.text = Mathf.RoundToInt(p_value).ToString();
 		}
 
 		public void TabCloseAll()
 		{
 			tabMain.SetActive(false);
+			tabRooms.SetActive(false);
 			tabRooms.SetActive(false);
 		}
 
@@ -166,6 +181,12 @@ namespace Com.Jackseb.FPS
 		{
 			TabCloseAll();
 			tabRooms.SetActive(true);
+		}
+
+		public void TabOpenCreate()
+		{
+			TabCloseAll();
+			tabCreate.SetActive(true);
 		}
 
 		private void ClearRoomList()
