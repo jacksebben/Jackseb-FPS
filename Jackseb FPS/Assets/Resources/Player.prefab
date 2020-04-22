@@ -406,11 +406,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 500
   sprintModifier: 2
+  crouchModifier: 0.5
   jumpForce: 1000
-  lengthOfSlide: 1
-  slideModifier: 2.5
   cameraTransformAmount: 0.8
-  slideCooldown: 5
   maxHealth: 100
   normalCam: {fileID: 4152585651830585996}
   weaponCam: {fileID: 3037581494329983751}
@@ -426,9 +424,10 @@ MonoBehaviour:
     xp: 0
     elo: 0
   playerUsernameText: {fileID: 956272776300232464}
+  crouchAmount: 0.75
   standingCollider: {fileID: 9100505199462838078}
-  slidingCollider: {fileID: 2710066830247744446}
-  sliding: 0
+  crouchingCollider: {fileID: 2710066830247744446}
+  crouched: 0
 --- !u!114 &4152585652078937449
 MonoBehaviour:
   m_ObjectHideFlags: 0

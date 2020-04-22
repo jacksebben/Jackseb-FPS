@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   gunName: Shotgun
-  damage: 15
-  ammo: 50
+  damage: 19
+  clipSize: 8
+  ammo: 32
   burst: 0
-  pellets: 10
-  clipSize: 2
+  pellets: 9
   slot: 0
-  firerate: 0.75
-  bloom: 80
+  firerate: 0.88
+  bloom: 40
   recoil: 15
   kickback: 0.2
   aimSpeed: 7
-  reloadTime: 2
+  reloadTime: 2.8
   mainFOV: 0.7
   weaponFOV: 0.45
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}

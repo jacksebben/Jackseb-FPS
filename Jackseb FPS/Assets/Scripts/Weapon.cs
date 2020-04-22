@@ -171,7 +171,7 @@ namespace Com.Jackseb.FPS
 				currentGunData = loadout[p_ind];
 
 				// Sound
-				sfx.PlayOneShot(equipSound);
+				sfx.PlayOneShot(equipSound, 0.5f);
 			}
 		}
 
@@ -183,6 +183,8 @@ namespace Com.Jackseb.FPS
 
 			loadout[newWeapon.slot] = newWeapon;
 			newWeapon.Initialize();
+			Equip(0);
+			Equip(1);
 			Equip(newWeapon.slot);
 		}
 

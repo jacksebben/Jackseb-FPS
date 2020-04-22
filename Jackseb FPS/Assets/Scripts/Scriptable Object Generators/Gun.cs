@@ -7,26 +7,47 @@ namespace Com.Jackseb.FPS
 	[CreateAssetMenu(fileName = "New Gun", menuName = "Gun")]
 	public class Gun : ScriptableObject
 	{
+		[Tooltip("The name of the gun")]
 		public string gunName;
+		[Tooltip("Base damage of the gun")]
 		public int damage;
-		public int ammo;
-		public int burst; // 0 semi | 1 automatic | 2 
-		public int pellets;
+		[Tooltip("Amount in a single magazine")]
 		public int clipSize;
-		public int slot; // 0 = alpha1 | 1 = alpha 2 | etc...
+		[Tooltip("Amount of reserve ammo")]
+		public int ammo;
+		[Tooltip("0 = semi, 1 = automatic, 2 = burst")]
+		public int burst;
+		[Tooltip("How many pellets the gun will produce on fire")]
+		public int pellets;
+		[Tooltip("0 = primary, 1 = seconday, etc...")]
+		public int slot;
+		[Tooltip("Time in seconds between each bullet")]
 		public float firerate;
+		[Tooltip("The spread of the weapon")]
 		public float bloom;
+		[Tooltip("How much gun rotates on fire")]
 		public float recoil;
+		[Tooltip("How much gun moves back on fire")]
 		public float kickback;
+		[Tooltip("Speed to aim down the sights (Time.deltaTime)")]
 		public float aimSpeed;
+		[Tooltip("Time in seconds to reload")]
 		public float reloadTime;
+		[Tooltip("How big the weapon is unscoped")]
 		[Range(0, 1)] public float mainFOV;
+		[Tooltip("How big the weapon is ADS")]
 		[Range(0, 1)] public float weaponFOV;
+		[Tooltip("Sound when gun is fired")]
 		public AudioClip gunshotSound;
+		[Tooltip("Sound when gun is reloaded")]
 		public AudioClip reloadSound;
+		[Tooltip("Sound when gun is done reloading")]
 		public AudioClip finishReloadSound;
+		[Tooltip("How much the pitch of the gunshot sound differs between shots")]
 		public float pitchRandomization;
+		[Tooltip("Prefab of gun model")]
 		public GameObject prefab;
+		[Tooltip("Prefab of pickup model")]
 		public GameObject displayPrefab;
 
 		private int stash; // Current ammo

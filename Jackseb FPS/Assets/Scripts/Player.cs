@@ -13,11 +13,9 @@ namespace Com.Jackseb.FPS
 
 		public float speed;
 		public float sprintModifier;
+		public float crouchModifier;
 		public float jumpForce;
-		public float lengthOfSlide;
-		public float slideModifier;
 		public float cameraTransformAmount;
-		public int slideCooldown;
 		public int maxHealth;
 		public Camera normalCam;
 		public Camera weaponCam;
@@ -29,11 +27,11 @@ namespace Com.Jackseb.FPS
 		[HideInInspector] public ProfileData playerProfile;
 		public TextMeshPro playerUsernameText;
 
+		public float crouchAmount;
 		public GameObject standingCollider;
-		public GameObject slidingCollider;
+		public GameObject crouchingCollider;
 
 		private Transform uiHealthBar;
-		private Transform uiSprintBar;
 		private Text uiAmmo;
 		private Text uiAmmoFrame;
 		private Text uiUsername;
@@ -56,11 +54,7 @@ namespace Com.Jackseb.FPS
 		private GameManager r_GameManager;
 		private Weapon r_Weapon;
 
-		public bool sliding;
-		private float slideTime;
-		private float slideCooldownTime;
-		private bool canSlideNoCooldown;
-		private Vector3 slideDirection;
+		public bool crouched;
 
 		private bool isAiming;
 
@@ -102,7 +96,7 @@ namespace Com.Jackseb.FPS
 			{
 				gameObject.layer = 11;
 				standingCollider.layer = 11;
-				slidingCollider.layer = 11;
+				crouchingCollider.layer = 11;
 			}
 
 			baseFOV = normalCam.fieldOfView;
@@ -119,7 +113,6 @@ namespace Com.Jackseb.FPS
 			if (photonView.IsMine)
 			{
 				uiHealthBar = GameObject.Find("HUD/Health/Bar").transform;
-				uiSprintBar = GameObject.Find("HUD/Sprint/Bar").transform;
 				uiAmmo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
 				uiAmmoFrame = GameObject.Find("HUD/Ammo/Frame").GetComponent<Text>();
 				uiUsername = GameObject.Find("HUD/Health/Username").GetComponent<Text>();
@@ -146,12 +139,14 @@ namespace Com.Jackseb.FPS
 			// Controls
 			bool sprint = Input.GetKey(KeyCode.LeftShift);
 			bool jump = Input.GetKeyDown(KeyCode.Space);
+			bool crouch = Input.GetKeyDown(KeyCode.LeftControl);
 			bool pause = Input.GetKeyDown(KeyCode.Escape);
 
 			// States
 			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
 			bool isJumping = jump && isGrounded;
 			bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
+			bool isCrouching = crouch && !isSprinting && !isJumping && isGrounded;
 
 			// Pause
 			if (pause)
@@ -170,9 +165,16 @@ namespace Com.Jackseb.FPS
 				isSprinting = false;
 			}
 
+			// Crouching
+			if (isCrouching)
+			{
+				photonView.RPC("SetCrouch", RpcTarget.AllBuffered, !crouched);
+			}
+
 			// Jumping
 			if (isJumping)
 			{
+				if (crouched) photonView.RPC("SetCrouch", RpcTarget.AllBuffered, false);
 				rig.AddForce(Vector3.up * jumpForce);
 			}
 
@@ -184,21 +186,22 @@ namespace Com.Jackseb.FPS
 				Headbob(idleCounter, 0.025f, 0.025f);
 				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
 			}
-			else if (sliding)
-			{
-				Headbob(movementCounter, 0.15f, 0.075f);
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
-			}
 			else if (t_hMove == 0 && t_vMove == 0)
 			{
 				Headbob(idleCounter, 0.025f, 0.025f);
 				idleCounter += Time.deltaTime;
 				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
 			}
-			else if (!isSprinting)
+			else if (!isSprinting && !crouched)
 			{
 				Headbob(movementCounter, 0.035f, 0.035f);
 				movementCounter += Time.deltaTime * 3f;
+				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+			}
+			else if (crouched)
+			{
+				Headbob(movementCounter, 0.02f, 0.02f);
+				movementCounter += Time.deltaTime * 1.75f;
 				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
 			}
 			else
@@ -241,8 +244,7 @@ namespace Com.Jackseb.FPS
 			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
 			bool isJumping = jump && isGrounded;
 			bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
-			bool isSliding = isSprinting && slide && !sliding && canSlideNoCooldown;
-			isAiming = aim && !Input.GetKey(KeyCode.LeftShift) && !sliding;
+			isAiming = aim && !Input.GetKey(KeyCode.LeftShift);
 
 			// Pause
 			if (Pause.paused)
@@ -254,7 +256,6 @@ namespace Com.Jackseb.FPS
 				isGrounded = false;
 				isJumping = false;
 				isSprinting = false;
-				isSliding = false;
 				isAiming = false;
 			}
 
@@ -262,88 +263,51 @@ namespace Com.Jackseb.FPS
 			Vector3 t_direction = Vector3.zero;
 			float t_adjustedSpeed = speed;
 
-			if (!sliding)
+			t_direction = new Vector3(t_hMove, 0, t_vMove);
+			t_direction.Normalize();
+			t_direction = transform.TransformDirection(t_direction);
+
+			if (isSprinting)
 			{
-				t_direction = new Vector3(t_hMove, 0, t_vMove);
-				t_direction.Normalize();
-				t_direction = transform.TransformDirection(t_direction);
-
-				if (isSprinting) t_adjustedSpeed *= sprintModifier;
-
-				
-				if (slideCooldownTime > 0)
-				{
-					slideCooldownTime -= Time.deltaTime;
-					
-				}
-				else
-				{
-					canSlideNoCooldown = true;
-				}
+				if (crouched) photonView.RPC("SetCrouch", RpcTarget.AllBuffered, false);
+				t_adjustedSpeed *= sprintModifier;
 			}
-			else
+			else if (crouched)
 			{
-				t_direction = slideDirection;
-				t_adjustedSpeed *= slideModifier;
-				slideCooldownTime = slideCooldown;
-				slideTime -= Time.deltaTime;
-				if (slideTime <= 0)
-				{
-					sliding = false;
-					canSlideNoCooldown = false;
-
-					standingCollider.SetActive(true);
-					slidingCollider.SetActive(false);
-					weaponParentCurrentPos += Vector3.up * cameraTransformAmount;
-				}
+				t_adjustedSpeed *= crouchModifier;
 			}
 
 			Vector3 t_targetVelocity = t_direction * t_adjustedSpeed * Time.deltaTime;
 			t_targetVelocity.y = rig.velocity.y;
 			rig.velocity = t_targetVelocity;
 
-			// Sliding
-			if (isSliding)
-			{
-				sliding = true;
-				slideDirection = t_direction;
-				slideTime = lengthOfSlide;
-
-				standingCollider.SetActive(false);
-				slidingCollider.SetActive(true);
-				weaponParentCurrentPos += Vector3.down * cameraTransformAmount;
-			}
-
 			// Aiming
 			isAiming = r_Weapon.Aim(isAiming);
 
 			// Camera stuff
-			if (sliding)
+			if (isSprinting)
 			{
-				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier * 1.15f, Time.deltaTime * 8f);
-				weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV * sprintFOVModifier * 1.15f, Time.deltaTime * 8f);
-
-				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin + Vector3.down * cameraTransformAmount, Time.deltaTime * 6f);
-				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin + Vector3.down * cameraTransformAmount, Time.deltaTime * 6f);
+				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
+				weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
+			}
+			else if (isAiming)
+			{
+				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * r_Weapon.currentGunData.mainFOV, Time.deltaTime * 8f);
+				weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV * r_Weapon.currentGunData.weaponFOV, Time.deltaTime * 8f);
 			}
 			else
 			{
-				if (isSprinting)
-				{
-					normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
-					weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
-				}
-				else if (isAiming)
-				{
-					normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * r_Weapon.currentGunData.mainFOV, Time.deltaTime * 8f);
-					weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV * r_Weapon.currentGunData.weaponFOV, Time.deltaTime * 8f);
-				}
-				else
-				{
-					normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
-					weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
-				}
+				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
+				weaponCam.fieldOfView = Mathf.Lerp(weaponCam.fieldOfView, baseFOV, Time.deltaTime * 8f);
+			}
 
+			if (crouched)
+			{
+				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
+				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
+			}
+			else
+			{
 				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin, Time.deltaTime * 6f);
 				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin, Time.deltaTime * 6f);
 			}
@@ -383,18 +347,8 @@ namespace Com.Jackseb.FPS
 		void RefreshHealthBar()
 		{
 			float t_healthRatio = (float)currentHealth / (float)maxHealth;
-			float t_sprintRatio = ((float)slideCooldown - slideCooldownTime) / (float)slideCooldown;
-			if (t_sprintRatio >= 1) t_sprintRatio = 1;
 
 			uiHealthBar.localScale = Vector3.Lerp(uiHealthBar.localScale, new Vector3(t_healthRatio, 1, 1), Time.deltaTime * 8f);
-			if (canSlideNoCooldown)
-			{
-				uiSprintBar.localScale = Vector3.Lerp(uiSprintBar.localScale, new Vector3(t_sprintRatio, 1, 1), Time.deltaTime * 6f);
-			}
-			else
-			{
-				uiSprintBar.localScale = new Vector3(t_sprintRatio, 1, 1);
-			}
 
 			if (currentHealth >= 50 && currentHealth <= 100)
 			{
@@ -408,14 +362,26 @@ namespace Com.Jackseb.FPS
 			{
 				uiHealthBar.GetComponent<Image>().color = Color.Lerp(uiHealthBar.GetComponent<Image>().color, Color.red, Time.deltaTime * 8f);
 			}
+		}
 
-			if (slideCooldownTime > 0)
+		[PunRPC]
+		void SetCrouch (bool p_state)
+		{
+			if (crouched == p_state) return;
+
+			crouched = p_state;
+
+			if (crouched)
 			{
-				uiSprintBar.GetComponent<Image>().color = new Color(0.45f, 0.5f, 0.55f, 1);
+				standingCollider.SetActive(false);
+				crouchingCollider.SetActive(true);
+				weaponParentCurrentPos += Vector3.down * crouchAmount;
 			}
 			else
 			{
-				uiSprintBar.GetComponent<Image>().color = new Color(0, 0.5f, 1, 1);
+				standingCollider.SetActive(true);
+				crouchingCollider.SetActive(false);
+				weaponParentCurrentPos -= Vector3.down * crouchAmount;
 			}
 		}
 

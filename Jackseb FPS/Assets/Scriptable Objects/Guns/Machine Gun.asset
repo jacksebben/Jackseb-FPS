@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Machine Gun
   m_EditorClassIdentifier: 
   gunName: Machine Gun
-  damage: 23
-  ammo: 150
+  damage: 26
+  clipSize: 30
+  ammo: 90
   burst: 1
-  pellets: 0
-  clipSize: 32
+  pellets: 1
   slot: 0
   firerate: 0.1
   bloom: 20
   recoil: 2
   kickback: 0.05
   aimSpeed: 5
-  reloadTime: 2.5
+  reloadTime: 2.43
   mainFOV: 0.7
   weaponFOV: 0.3
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}

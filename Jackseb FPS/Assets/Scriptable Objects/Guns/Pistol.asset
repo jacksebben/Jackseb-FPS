@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   gunName: Pistol
-  damage: 15
-  ammo: 20
+  damage: 22
+  clipSize: 20
+  ammo: 120
   burst: 0
-  pellets: 0
-  clipSize: 8
+  pellets: 1
   slot: 1
   firerate: 0.15
   bloom: 1
   recoil: 7
   kickback: 0.15
   aimSpeed: 10
-  reloadTime: 1.5
+  reloadTime: 2.27
   mainFOV: 0.7
   weaponFOV: 0.6
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
