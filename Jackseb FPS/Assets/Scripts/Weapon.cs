@@ -45,15 +45,17 @@ namespace Com.Jackseb.FPS
 			hitmarkerImage.color = new Color(1, 1, 1, 0);
 			if (loadout[0] != null)
 			{
+				Equip(2);
 				Equip(0);
 			}
 			else if (loadout[1] != null)
 			{
+				Equip(2);
 				Equip(1);
 			}
 			else if (loadout[2] != null)
 			{
-				Equip(2);
+				
 			}
 		}
 
@@ -133,22 +135,24 @@ namespace Com.Jackseb.FPS
 
 		IEnumerator Reload(float p_wait)
 		{
-			isReloading = true;
-			currentWeapon.SetActive(false);
+			if (photonView.IsMine)
+			{
+				isReloading = true;
+				currentWeapon.SetActive(false);
+
+				// Sound
+				sfx.clip = currentGunData.reloadSound;
+				sfx.Play();
+
+				yield return new WaitForSeconds(p_wait);
+
+				currentGunData.Reload();
+				currentWeapon.SetActive(true);
+				isReloading = false;
+			}
 
 			// Sound
-			sfx.clip = currentGunData.reloadSound;
-			sfx.Play();
-
-			yield return new WaitForSeconds(p_wait);
-
-			currentGunData.Reload();
-			currentWeapon.SetActive(true);
-			isReloading = false;
-
-			// Sound
-			sfx.clip = currentGunData.finishReloadSound;
-			sfx.Play();
+			sfx.PlayOneShot(currentGunData.finishReloadSound);
 		}
 
 		[PunRPC]
@@ -240,9 +244,14 @@ namespace Com.Jackseb.FPS
 			for (int i = 0; i < Mathf.Max(1, currentGunData.pellets); i++)
 			{
 				// Bloom
-				Vector3 t_bloom = t_spawn.position + t_spawn.forward * 1000f;
-				t_bloom += Random.Range(-currentGunData.bloom, currentGunData.bloom) * t_spawn.up;
-				t_bloom += Random.Range(-currentGunData.bloom, currentGunData.bloom) * t_spawn.right;
+				Vector3 t_bloom = t_spawn.position + t_spawn.forward * currentGunData.range;
+
+				float t_factor = currentGunData.bloom;
+				if (GetComponent<Player>().jumped) t_factor = 100;
+				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = 50;
+
+				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.up;
+				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.right;
 				t_bloom -= t_spawn.position;
 				t_bloom.Normalize();
 
@@ -263,8 +272,12 @@ namespace Com.Jackseb.FPS
 						// Shooting other player on network
 						if (t_hit.collider.gameObject.layer == 11)
 						{
+							float t_multiplier = 1;
+
+							if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
+							
 							// Give damage
-							t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber);
+							t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
 
 							// Show hitmarker
 							hitmarkerImage.color = Color.white;
@@ -286,9 +299,9 @@ namespace Com.Jackseb.FPS
 		}
 
 		[PunRPC]
-		private void TakeDamage(int p_damage, int p_actor)
+		private void TakeDamage(int p_damage, int p_actor, float p_multi)
 		{
-			GetComponent<Player>().TakeDamage(p_damage, p_actor);
+			GetComponent<Player>().TakeDamage(p_damage, p_actor, p_multi);
 		}
 
 		#endregion

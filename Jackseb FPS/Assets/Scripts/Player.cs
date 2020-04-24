@@ -16,6 +16,8 @@ namespace Com.Jackseb.FPS
 		public float crouchModifier;
 		public float jumpForce;
 		public float cameraTransformAmount;
+		public float t_hMove;
+		public float t_vMove;
 		public int maxHealth;
 		public Camera normalCam;
 		public Camera weaponCam;
@@ -35,6 +37,7 @@ namespace Com.Jackseb.FPS
 		private Text uiAmmo;
 		private Text uiAmmoFrame;
 		private Text uiUsername;
+		private Image uiDamageIndicator;
 
 		private Rigidbody rig;
 
@@ -60,6 +63,7 @@ namespace Com.Jackseb.FPS
 		private GameManager r_GameManager;
 		private Weapon r_Weapon;
 
+		public bool jumped;
 		public bool crouched;
 
 		private bool isAiming;
@@ -79,10 +83,21 @@ namespace Com.Jackseb.FPS
 			if (p_stream.IsWriting)
 			{
 				p_stream.SendNext((int)(weaponParent.transform.localEulerAngles.x * 100f));
+
+				p_stream.SendNext(rig.position);
+				p_stream.SendNext(rig.rotation);
+				p_stream.SendNext(rig.velocity);
 			}
 			else
 			{
 				aimAngle = (int)p_stream.ReceiveNext() / 100f;
+
+				rig.position = (Vector3)p_stream.ReceiveNext();
+				rig.rotation = (Quaternion)p_stream.ReceiveNext();
+				rig.velocity = (Vector3)p_stream.ReceiveNext();
+
+				float lag = Mathf.Abs((float)(PhotonNetwork.Time - p_message.SentServerTime));
+				rig.position += rig.velocity * lag;
 			}
 		}
 
@@ -122,6 +137,9 @@ namespace Com.Jackseb.FPS
 				uiAmmo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
 				uiAmmoFrame = GameObject.Find("HUD/Ammo/Frame").GetComponent<Text>();
 				uiUsername = GameObject.Find("HUD/Health/Username").GetComponent<Text>();
+				uiDamageIndicator = GameObject.Find("HUD/Damage Indicator").GetComponent<Image>();
+
+				uiDamageIndicator.enabled = false;
 
 				RefreshHealthBar();
 				uiUsername.text = Launcher.myProfile.username;
@@ -139,8 +157,8 @@ namespace Com.Jackseb.FPS
 			}
 			
 			// Axes
-			float t_hMove = Input.GetAxisRaw("Horizontal");
-			float t_vMove = Input.GetAxisRaw("Vertical");
+			t_hMove = Input.GetAxis("Horizontal");
+			t_vMove = Input.GetAxis("Vertical");
 
 			// Controls
 			bool sprint = Input.GetKey(KeyCode.LeftShift);
@@ -149,9 +167,11 @@ namespace Com.Jackseb.FPS
 			bool pause = Input.GetKeyDown(KeyCode.Escape);
 
 			// States
-			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.5f, ground);
 			bool isJumping = jump && isGrounded;
-			bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
+			jumped = !isGrounded;
+			//bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
+			bool isSprinting = sprint && t_vMove > 0;
 			bool isCrouching = crouch && !isSprinting && !isJumping && isGrounded;
 
 			// Pause
@@ -184,7 +204,7 @@ namespace Com.Jackseb.FPS
 				rig.AddForce(Vector3.up * jumpForce);
 			}
 
-			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(Random.Range(15, 23), -1); // TEST TAKE DAMAGE COMMAND
+			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(Random.Range(15, 23), -1, 1); // TEST TAKE DAMAGE COMMAND
 
 			// Headbob
 			if (!isGrounded)
@@ -237,19 +257,20 @@ namespace Com.Jackseb.FPS
 			if (!photonView.IsMine) return;
 
 			// Axes
-			float t_hMove = Input.GetAxisRaw("Horizontal");
-			float t_vMove = Input.GetAxisRaw("Vertical");
+			t_hMove = Input.GetAxis("Horizontal");
+			t_vMove = Input.GetAxis("Vertical");
 
 			// Controls
 			bool sprint = Input.GetKey(KeyCode.LeftShift);
 			bool jump = Input.GetKeyDown(KeyCode.Space);
-			bool slide = Input.GetKey(KeyCode.LeftAlt);
 			bool aim = Input.GetMouseButton(1);
 
 			// States
-			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
+			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.5f, ground);
 			bool isJumping = jump && isGrounded;
-			bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
+			jumped = !isGrounded;
+			//bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
+			bool isSprinting = sprint && t_vMove > 0;
 			isAiming = aim && !Input.GetKey(KeyCode.LeftShift);
 
 			// Pause
@@ -284,18 +305,18 @@ namespace Com.Jackseb.FPS
 			}
 
 			// Sound
-			if (isSprinting && !doingFootsteps)
+			if (isSprinting && isGrounded && !doingFootsteps)
 			{
 				doingFootsteps = true;
 				timeStamp = Time.time + footstepInterv;
-				photonView.RPC("SprintSound", RpcTarget.All);
 			}
-			else if (!isSprinting)
+			else if (!isSprinting || !isGrounded)
 			{
 				doingFootsteps = false;
 			}
 			if (timeStamp <= Time.time && doingFootsteps)
 			{
+				photonView.RPC("SprintSound", RpcTarget.All);
 				doingFootsteps = false;
 			}
 
@@ -325,13 +346,13 @@ namespace Com.Jackseb.FPS
 
 			if (crouched)
 			{
-				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
-				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 6f);
+				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 8f);
+				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 8f);
 			}
 			else
 			{
-				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin, Time.deltaTime * 6f);
-				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin, Time.deltaTime * 6f);
+				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin, Time.deltaTime * 8f);
+				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin, Time.deltaTime * 8f);
 			}
 		}
 
@@ -433,12 +454,13 @@ namespace Com.Jackseb.FPS
 
 		#region Public Methods
 
-		public void TakeDamage(int p_damage, int p_actor)
+		public void TakeDamage(int p_damage, int p_actor, float p_multi)
 		{
 			if (photonView.IsMine)
 			{
-				currentHealth -= p_damage;
+				currentHealth -= Mathf.RoundToInt(p_damage * p_multi);
 				RefreshHealthBar();
+				StartCoroutine(DamageIndicator(0.1f));
 
 				if (currentHealth <= 0)
 				{
@@ -451,6 +473,15 @@ namespace Com.Jackseb.FPS
 					PhotonNetwork.Destroy(gameObject);
 				}
 			}
+		}
+
+		IEnumerator DamageIndicator(float p_wait)
+		{
+			uiDamageIndicator.enabled = true;
+
+			yield return new WaitForSeconds(p_wait);
+
+			uiDamageIndicator.enabled = false;
 		}
 
 		#endregion

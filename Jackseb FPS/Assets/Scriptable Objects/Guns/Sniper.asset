@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf76bd93fe576743be8a174ef2d3b32, type: 3}
+  m_Name: Sniper
+  m_EditorClassIdentifier: 
+  gunName: Sniper
+  damage: 115
+  headshotMultiplier: 3.9
+  range: 1000
+  clipSize: 10
+  ammo: 30
+  burst: 0
+  pellets: 1
+  slot: 0
+  firerate: 1.5
+  bloom: 1
+  recoil: 2
+  kickback: 0.5
+  canADS: 1
+  aimSpeed: 5
+  canReload: 1
+  reloadTime: 3.7
+  mainFOV: 0.25
+  weaponFOV: 0.06
+  gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
+  reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
+  pitchRandomization: 0.1
+  prefab: {fileID: 7269680795320770078, guid: ca0152cfa9496dd469efe24b9d2af9ac, type: 3}
+  displayPrefab: {fileID: 7269680795320770078, guid: cad2089863f918547a8e1ab943aff90c,
+    type: 3}

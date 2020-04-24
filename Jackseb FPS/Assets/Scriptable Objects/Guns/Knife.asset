@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bf76bd93fe576743be8a174ef2d3b32, type: 3}
   m_Name: Knife
   m_EditorClassIdentifier: 
-  gunName: Pistol
+  gunName: Knife
   damage: 1000
+  headshotMultiplier: 1
   range: 1.5
   clipSize: 0
   ammo: 0
@@ -22,8 +23,8 @@ MonoBehaviour:
   slot: 2
   firerate: 0.55
   bloom: 0
-  recoil: -40
-  kickback: -1
+  recoil: -30
+  kickback: -2
   canADS: 0
   aimSpeed: 0
   canReload: 0
@@ -35,5 +36,4 @@ MonoBehaviour:
   finishReloadSound: {fileID: 0}
   pitchRandomization: 0
   prefab: {fileID: 7269680795320770078, guid: c9c01d04b10aff04cb9f1123f18168de, type: 3}
-  displayPrefab: {fileID: 2135754436575046503, guid: aa9422040c29ef14ba72fad15b69f8e6,
-    type: 3}
+  displayPrefab: {fileID: 0}

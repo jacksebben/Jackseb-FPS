@@ -11,6 +11,8 @@ namespace Com.Jackseb.FPS
 		public string gunName;
 		[Tooltip("Base damage of the gun")]
 		public int damage;
+		[Tooltip("How much damage will be multiplied to get headshot damage")]
+		public float headshotMultiplier;
 		[Tooltip("How far a gun can be shot")]
 		public float range;
 		[Tooltip("Amount in a single magazine")]

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   gunName: Shotgun
-  damage: 19
+  damage: 26
+  headshotMultiplier: 2
   range: 1000
   clipSize: 8
   ammo: 32
@@ -24,10 +25,10 @@ MonoBehaviour:
   bloom: 40
   recoil: 15
   kickback: 0.2
+  canADS: 1
   aimSpeed: 7
   canReload: 1
   reloadTime: 2.8
-  canADS: 1
   mainFOV: 0.7
   weaponFOV: 0.45
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
