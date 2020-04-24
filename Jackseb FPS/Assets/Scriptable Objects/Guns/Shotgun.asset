@@ -22,11 +22,11 @@ MonoBehaviour:
   pellets: 9
   slot: 0
   firerate: 0.88
-  bloom: 40
+  bloom: 20
   recoil: 15
   kickback: 0.2
   canADS: 1
-  aimSpeed: 7
+  aimSpeed: 8
   canReload: 1
   reloadTime: 2.8
   mainFOV: 0.7

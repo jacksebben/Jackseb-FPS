@@ -57,7 +57,6 @@ namespace Com.Jackseb.FPS
 			// Rotate towards target
 			transform.localRotation = Quaternion.Lerp(transform.localRotation, t_targetRotation, Time.deltaTime * smooth);
 		}
-
 		#endregion
 	}
 }

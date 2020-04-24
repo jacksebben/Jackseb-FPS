@@ -116,8 +116,8 @@ namespace Com.Jackseb.FPS
 			if (!photonView.IsMine)
 			{
 				gameObject.layer = 11;
-				standingCollider.layer = 11;
-				crouchingCollider.layer = 11;
+				ChangeLayersRecursively(standingCollider, 11);
+				ChangeLayersRecursively(crouchingCollider, 11);
 			}
 
 			baseFOV = normalCam.fieldOfView;
@@ -209,32 +209,31 @@ namespace Com.Jackseb.FPS
 			// Headbob
 			if (!isGrounded)
 			{
-				Headbob(idleCounter, 0.025f, 0.025f);
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+				//airborne
+				Headbob(idleCounter, 0.01f, 0.01f);
+				idleCounter += 0;
+				weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
 			}
 			else if (t_hMove == 0 && t_vMove == 0)
 			{
-				Headbob(idleCounter, 0.025f, 0.025f);
-				idleCounter += Time.deltaTime;
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 2f);
+				//idling
+				Headbob(idleCounter, 0.01f, 0.01f);
+				idleCounter += Time.deltaTime * 3f;
+				weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 3f);
 			}
-			else if (!isSprinting && !crouched)
+			else if (!isSprinting)
 			{
+				//walking
 				Headbob(movementCounter, 0.035f, 0.035f);
 				movementCounter += Time.deltaTime * 3f;
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
-			}
-			else if (crouched)
-			{
-				Headbob(movementCounter, 0.02f, 0.02f);
-				movementCounter += Time.deltaTime * 1.75f;
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
+				weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 3f);
 			}
 			else
 			{
-				Headbob(movementCounter, 0.15f, 0.075f);
-				movementCounter += Time.deltaTime * 5f;
-				weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
+				//sprinting
+				Headbob(movementCounter, 0.15f, 0.055f);
+				movementCounter += Time.deltaTime * 13.5f;
+				weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 10f);
 			}
 
 			//UI Refreshes
@@ -327,7 +326,7 @@ namespace Com.Jackseb.FPS
 			// Aiming
 			isAiming = r_Weapon.Aim(isAiming);
 
-			// Camera stuff
+			//Camera Stuff
 			if (isSprinting)
 			{
 				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
@@ -346,13 +345,13 @@ namespace Com.Jackseb.FPS
 
 			if (crouched)
 			{
-				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 8f);
-				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 8f);
+				normalCamTarget = Vector3.MoveTowards(normalCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 4f);
+				weaponCamTarget = Vector3.MoveTowards(weaponCam.transform.localPosition, origin + Vector3.down * crouchAmount, Time.deltaTime * 4f);
 			}
 			else
 			{
-				normalCamTarget = Vector3.Lerp(normalCam.transform.localPosition, origin, Time.deltaTime * 8f);
-				weaponCamTarget = Vector3.Lerp(weaponCam.transform.localPosition, origin, Time.deltaTime * 8f);
+				normalCamTarget = Vector3.MoveTowards(normalCam.transform.localPosition, origin, Time.deltaTime * 4f);
+				weaponCamTarget = Vector3.MoveTowards(weaponCam.transform.localPosition, origin, Time.deltaTime * 4f);
 			}
 		}
 
@@ -367,12 +366,18 @@ namespace Com.Jackseb.FPS
 
 		#region Private Methods
 
+		void ChangeLayersRecursively(GameObject p_target, int p_layer)
+		{
+			p_target.layer = p_layer;
+			foreach (Transform a in p_target.transform) ChangeLayersRecursively(a.gameObject, p_layer);
+		}
+
 		void RefreshMultiplayerState()
 		{
 			float cacheEulY = weaponParent.localEulerAngles.y;
 
 			Quaternion targetRotation = Quaternion.identity * Quaternion.AngleAxis(aimAngle, Vector3.right);
-			weaponParent.rotation = Quaternion.Slerp(weaponParent.rotation, targetRotation, Time.deltaTime * 8f);
+			weaponParent.rotation = Quaternion.Slerp(weaponParent.rotation, targetRotation, Time.deltaTime * 6f);
 
 			Vector3 finalRotation = weaponParent.localEulerAngles;
 			finalRotation.y = cacheEulY;

@@ -112,7 +112,7 @@ namespace Com.Jackseb.FPS
 				}
 
 				// Weapon position elasticity
-				currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+				currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 8f);
 			}
 
 			if (photonView.IsMine)
@@ -247,8 +247,8 @@ namespace Com.Jackseb.FPS
 				Vector3 t_bloom = t_spawn.position + t_spawn.forward * currentGunData.range;
 
 				float t_factor = currentGunData.bloom;
-				if (GetComponent<Player>().jumped) t_factor = 100;
-				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = 50;
+				if (GetComponent<Player>().jumped) t_factor = 50;
+				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = 25;
 
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.up;
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.right;

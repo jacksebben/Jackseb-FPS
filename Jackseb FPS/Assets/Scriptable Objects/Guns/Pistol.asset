@@ -26,7 +26,7 @@ MonoBehaviour:
   recoil: 7
   kickback: 0.15
   canADS: 1
-  aimSpeed: 10
+  aimSpeed: 12
   canReload: 1
   reloadTime: 2.27
   mainFOV: 0.7
