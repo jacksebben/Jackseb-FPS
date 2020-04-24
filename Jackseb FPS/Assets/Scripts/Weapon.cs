@@ -51,6 +51,10 @@ namespace Com.Jackseb.FPS
 			{
 				Equip(1);
 			}
+			else if (loadout[2] != null)
+			{
+				Equip(2);
+			}
 		}
 
 		void Update()
@@ -67,6 +71,11 @@ namespace Com.Jackseb.FPS
 				photonView.RPC("Equip", RpcTarget.AllBuffered, 1);
 			}
 
+			if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null)
+			{
+				photonView.RPC("Equip", RpcTarget.AllBuffered, 2);
+			}
+
 			if (currentWeapon != null)
 			{
 				if (photonView.IsMine)
@@ -76,7 +85,7 @@ namespace Com.Jackseb.FPS
 						if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && !isReloading)
 						{
 							if (currentGunData.CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
-							else if (currentGunData.CanReload())
+							else if (currentGunData.CanReload() && currentGunData.canReload)
 							{
 								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
 							}
@@ -87,7 +96,7 @@ namespace Com.Jackseb.FPS
 						if (Input.GetMouseButton(0) && currentCooldown <= 0 && !isReloading)
 						{
 							if (currentGunData.CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
-							else if (currentGunData.CanReload())
+							else if (currentGunData.CanReload() && currentGunData.canReload)
 							{
 								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
 							}
@@ -198,6 +207,7 @@ namespace Com.Jackseb.FPS
 		{
 			if (!currentWeapon) return false;
 			if (isReloading) p_isAiming = false;
+			if (!currentGunData.canADS) return false;
 
 			isAiming = p_isAiming;
 
@@ -238,9 +248,8 @@ namespace Com.Jackseb.FPS
 
 				// Raycast
 				RaycastHit t_hit = new RaycastHit();
-				Debug.DrawRay(t_spawn.position, t_spawn.forward * 1000f, Color.red, 1f);
-				Debug.DrawRay(t_spawn.position, t_bloom * 1000f, Color.blue, 1f);
-				if (Physics.Raycast(t_spawn.position, t_bloom, out t_hit, 1000f, canBeShot))
+				Debug.DrawRay(t_spawn.position, t_bloom * currentGunData.range, Color.red, 1f);
+				if (Physics.Raycast(t_spawn.position, t_bloom, out t_hit, currentGunData.range, canBeShot))
 				{
 					if (t_hit.collider.gameObject.layer != 11)
 					{

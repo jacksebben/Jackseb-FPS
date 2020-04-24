@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunName: Pistol
   damage: 22
+  range: 1000
   clipSize: 20
   ammo: 120
   burst: 0
@@ -24,7 +25,9 @@ MonoBehaviour:
   recoil: 7
   kickback: 0.15
   aimSpeed: 10
+  canReload: 1
   reloadTime: 2.27
+  canADS: 1
   mainFOV: 0.7
   weaponFOV: 0.6
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}

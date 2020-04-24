@@ -11,6 +11,8 @@ namespace Com.Jackseb.FPS
 		public string gunName;
 		[Tooltip("Base damage of the gun")]
 		public int damage;
+		[Tooltip("How far a gun can be shot")]
+		public float range;
 		[Tooltip("Amount in a single magazine")]
 		public int clipSize;
 		[Tooltip("Amount of reserve ammo")]
@@ -29,8 +31,12 @@ namespace Com.Jackseb.FPS
 		public float recoil;
 		[Tooltip("How much gun moves back on fire")]
 		public float kickback;
+		[Tooltip("Can this gun aim down a sight?")]
+		public bool canADS;
 		[Tooltip("Speed to aim down the sights (Time.deltaTime)")]
 		public float aimSpeed;
+		[Tooltip("Does this gun need to reload?")]
+		public bool canReload;
 		[Tooltip("Time in seconds to reload")]
 		public float reloadTime;
 		[Tooltip("How big the weapon is unscoped")]
@@ -61,12 +67,19 @@ namespace Com.Jackseb.FPS
 
 		public bool CanFireBullet()
 		{
-			if (clip > 0)
+			if (canReload)
 			{
-				clip -= 1;
+				if (clip > 0)
+				{
+					clip -= 1;
+					return true;
+				}
+				else return false;
+			}
+			else
+			{
 				return true;
 			}
-			else return false;
 		}
 
 		public bool CanReload()

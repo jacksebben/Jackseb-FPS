@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunName: Machine Gun
   damage: 26
+  range: 1000
   clipSize: 30
   ammo: 90
   burst: 1
@@ -24,7 +25,9 @@ MonoBehaviour:
   recoil: 2
   kickback: 0.05
   aimSpeed: 5
+  canReload: 1
   reloadTime: 2.43
+  canADS: 1
   mainFOV: 0.7
   weaponFOV: 0.3
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}

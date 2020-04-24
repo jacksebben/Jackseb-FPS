@@ -592,6 +592,7 @@ MonoBehaviour:
   loadout:
   - {fileID: 0}
   - {fileID: 11400000, guid: a940111d561716e4a9d68ad810676dfd, type: 2}
+  - {fileID: 11400000, guid: 73abaceea91da15499b4d06c41ec9161, type: 2}
   currentGunData: {fileID: 0}
   weaponParent: {fileID: 4152585652263969453}
   bulletholePrefab: {fileID: 7139063614839887235, guid: 605980941eb892f48a72e0709b812326,
