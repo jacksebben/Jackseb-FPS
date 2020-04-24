@@ -49,6 +49,12 @@ namespace Com.Jackseb.FPS
 		private float sprintFOVModifier = 1.25f;
 		private Vector3 origin;
 
+		public AudioSource footsteps;
+		public AudioClip footstepSFX;
+		public float footstepInterv = 0.32f;
+		private float timeStamp;
+		private bool doingFootsteps = false;
+
 		private int currentHealth;
 
 		private GameManager r_GameManager;
@@ -178,7 +184,7 @@ namespace Com.Jackseb.FPS
 				rig.AddForce(Vector3.up * jumpForce);
 			}
 
-			// if (Input.GetKeyDown(KeyCode.U)) TakeDamage(Random.Range(15, 23)); TEST TAKE DAMAGE COMMAND
+			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(Random.Range(15, 23), -1); // TEST TAKE DAMAGE COMMAND
 
 			// Headbob
 			if (!isGrounded)
@@ -277,6 +283,22 @@ namespace Com.Jackseb.FPS
 				t_adjustedSpeed *= crouchModifier;
 			}
 
+			// Sound
+			if (isSprinting && !doingFootsteps)
+			{
+				doingFootsteps = true;
+				timeStamp = Time.time + footstepInterv;
+				photonView.RPC("SprintSound", RpcTarget.All);
+			}
+			else if (!isSprinting)
+			{
+				doingFootsteps = false;
+			}
+			if (timeStamp <= Time.time && doingFootsteps)
+			{
+				doingFootsteps = false;
+			}
+
 			Vector3 t_targetVelocity = t_direction * t_adjustedSpeed * Time.deltaTime;
 			t_targetVelocity.y = rig.velocity.y;
 			rig.velocity = t_targetVelocity;
@@ -365,6 +387,20 @@ namespace Com.Jackseb.FPS
 		}
 
 		[PunRPC]
+		void SprintSound()
+		{
+			if (photonView.IsMine)
+			{
+				footsteps.spatialBlend = 0;
+			}
+			else
+			{
+				footsteps.spatialBlend = 1;
+			}
+			footsteps.PlayOneShot(footstepSFX);
+		}
+
+		[PunRPC]
 		void SetCrouch (bool p_state)
 		{
 			if (crouched == p_state) return;
@@ -397,7 +433,7 @@ namespace Com.Jackseb.FPS
 
 		#region Public Methods
 
-		public void TakeDamage(int p_damage)
+		public void TakeDamage(int p_damage, int p_actor)
 		{
 			if (photonView.IsMine)
 			{
@@ -407,6 +443,11 @@ namespace Com.Jackseb.FPS
 				if (currentHealth <= 0)
 				{
 					r_GameManager.Spawn();
+					r_GameManager.ChangeStat_S(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
+
+					if (p_actor >= 0)
+						r_GameManager.ChangeStat_S(p_actor, 0, 1);
+
 					PhotonNetwork.Destroy(gameObject);
 				}
 			}

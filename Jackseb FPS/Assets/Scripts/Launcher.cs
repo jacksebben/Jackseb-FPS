@@ -195,6 +195,18 @@ namespace Com.Jackseb.FPS
 			foreach (Transform a in content) Destroy(a.gameObject);
 		}
 
+		private void VerifyUsername()
+		{
+			if (string.IsNullOrEmpty(usernameField.text))
+			{
+				myProfile.username = "RANDOM_USER_" + Random.Range(100, 1000);
+			}
+			else
+			{
+				myProfile.username = usernameField.text;
+			}
+		}
+
 		public override void OnRoomListUpdate(List<RoomInfo> p_list)
 		{
 			roomList = p_list;
@@ -218,19 +230,15 @@ namespace Com.Jackseb.FPS
 		public void JoinRoom(Transform p_button)
 		{
 			string t_roomName = p_button.Find("Name").GetComponent<Text>().text;
+
+			VerifyUsername();
+
 			PhotonNetwork.JoinRoom(t_roomName);
 		}
 
 		public void StartGame()
 		{
-			if (string.IsNullOrEmpty(usernameField.text))
-			{
-				myProfile.username = "RANDOM_USER_" + Random.Range(100, 1000);
-			}
-			else
-			{
-				myProfile.username = usernameField.text;
-			}
+			VerifyUsername();
 
 			if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
 			{

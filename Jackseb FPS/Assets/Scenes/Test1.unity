@@ -5780,13 +5780,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae7c12110e5eb84fb90768689540071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: Player
+  playerPrefabString: Player
+  playerPrefab: {fileID: 4152585652078937454, guid: ad713855997d2bc49a11e190bf730d67,
+    type: 3}
   spawnPoints:
   - {fileID: 1547085331}
   - {fileID: 1079449176}
   - {fileID: 773618710}
   - {fileID: 1070893510}
   - {fileID: 2048653321}
+  myInd: 0
 --- !u!1 &1747954795
 GameObject:
   m_ObjectHideFlags: 0
@@ -6714,7 +6717,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0

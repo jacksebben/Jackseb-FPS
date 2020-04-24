@@ -255,7 +255,7 @@ namespace Com.Jackseb.FPS
 						if (t_hit.collider.gameObject.layer == 11)
 						{
 							// Give damage
-							t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage);
+							t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber);
 
 							// Show hitmarker
 							hitmarkerImage.color = Color.white;
@@ -277,9 +277,9 @@ namespace Com.Jackseb.FPS
 		}
 
 		[PunRPC]
-		private void TakeDamage(int p_damage)
+		private void TakeDamage(int p_damage, int p_actor)
 		{
-			GetComponent<Player>().TakeDamage(p_damage);
+			GetComponent<Player>().TakeDamage(p_damage, p_actor);
 		}
 
 		#endregion
