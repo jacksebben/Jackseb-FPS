@@ -65,10 +65,13 @@ namespace Com.Jackseb.FPS
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Tab))
+			if (Input.GetKey(KeyCode.Tab))
 			{
-				if (uiScoreboard.gameObject.activeSelf) uiScoreboard.gameObject.SetActive(false);
-				else Scoreboard(uiScoreboard);
+				Scoreboard(uiScoreboard);
+			}
+			else
+			{
+				uiScoreboard.gameObject.SetActive(false);
 			}
 		}
 
