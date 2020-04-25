@@ -270,8 +270,10 @@ namespace Com.Jackseb.FPS
 				Vector3 t_bloom = t_spawn.position + t_spawn.forward * currentGunData.range;
 
 				float t_factor = currentGunData.bloom;
-				if (GetComponent<Player>().jumped) t_factor = 50;
-				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = 25;
+				if (GetComponent<Player>().jumped) t_factor = currentGunData.jumpingBloom;
+				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = currentGunData.movingBloom;
+
+				if (isAiming) t_factor *= 0.5f;
 
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.up;
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.right;

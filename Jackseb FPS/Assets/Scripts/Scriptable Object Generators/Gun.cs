@@ -29,6 +29,10 @@ namespace Com.Jackseb.FPS
 		public float firerate;
 		[Tooltip("The spread of the weapon")]
 		public float bloom;
+		[Tooltip("The spread of the weapon when moving")]
+		public float movingBloom;
+		[Tooltip("The spread of the weapon when jumping")]
+		public float jumpingBloom;
 		[Tooltip("How much gun rotates on fire")]
 		public float recoil;
 		[Tooltip("How much gun moves back on fire")]

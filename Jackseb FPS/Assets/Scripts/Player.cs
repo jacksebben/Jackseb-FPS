@@ -224,7 +224,7 @@ namespace Com.Jackseb.FPS
 			else if (!isSprinting)
 			{
 				//walking
-				Headbob(movementCounter, 0.035f, 0.035f);
+				Headbob(movementCounter, 0.02f, 0.02f);
 				movementCounter += Time.deltaTime * 3f;
 				weaponParent.localPosition = Vector3.MoveTowards(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 3f);
 			}

@@ -22,7 +22,9 @@ MonoBehaviour:
   pellets: 1
   slot: 1
   firerate: 0.15
-  bloom: 1
+  bloom: 2
+  movingBloom: 10
+  jumpingBloom: 20
   recoil: 7
   kickback: 0.15
   canADS: 1
@@ -36,5 +38,5 @@ MonoBehaviour:
   finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
   pitchRandomization: 0.025
   prefab: {fileID: 7269680795320770078, guid: 6145a4b6e5a32df498422d46d7245a1e, type: 3}
-  displayPrefab: {fileID: 2135754436575046503, guid: aa9422040c29ef14ba72fad15b69f8e6,
+  displayPrefab: {fileID: 7269680795320770078, guid: 03c4c3c9ff60e5a4db0cc6dbf695921e,
     type: 3}
