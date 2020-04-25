@@ -104,6 +104,8 @@ namespace Com.Jackseb.FPS
 
 			PhotonNetwork.JoinLobby();
 
+			PhotonNetwork.NetworkingClient.AppVersion = version;
+
 			base.OnConnectedToMaster();
 		}
 
@@ -125,6 +127,7 @@ namespace Com.Jackseb.FPS
 		{
 			PhotonNetwork.GameVersion = version;
 			PhotonNetwork.ConnectUsingSettings();
+			PhotonNetwork.GameVersion = version;
 		}
 
 		public void Join()
