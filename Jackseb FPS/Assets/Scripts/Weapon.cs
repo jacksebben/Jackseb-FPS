@@ -55,7 +55,25 @@ namespace Com.Jackseb.FPS
 			}
 			else if (loadout[2] != null)
 			{
-				
+				Equip(2);
+			}
+		}
+
+		void CheckScrollWheel(int p_ind, float p_multiplier)
+		{
+			Debug.Log(Input.GetAxisRaw("Mouse ScrollWheel"));
+			int scrollInd = p_ind - Mathf.RoundToInt(p_multiplier * 10);
+
+			if (scrollInd < 0) scrollInd = 2;
+			if (scrollInd > 2) scrollInd = 0;
+
+			if (loadout[scrollInd] != null)
+			{
+				photonView.RPC("Equip", RpcTarget.AllBuffered, scrollInd);
+			}
+			else
+			{
+				CheckScrollWheel(scrollInd, p_multiplier);
 			}
 		}
 
@@ -76,6 +94,11 @@ namespace Com.Jackseb.FPS
 			if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null)
 			{
 				photonView.RPC("Equip", RpcTarget.AllBuffered, 2);
+			}
+
+			if (photonView.IsMine && Input.GetAxisRaw("Mouse ScrollWheel") != 0)
+			{
+				CheckScrollWheel(currentIndex, Input.GetAxisRaw("Mouse ScrollWheel"));
 			}
 
 			if (currentWeapon != null)

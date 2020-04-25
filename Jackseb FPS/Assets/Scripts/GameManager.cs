@@ -25,9 +25,22 @@ namespace Com.Jackseb.FPS
 		}
 	}
 
-	public class GameManager : MonoBehaviour, IOnEventCallback
+	public enum GameState
+	{
+		Waiting = 0,
+		Starting = 1,
+		Playing = 2,
+		Ending = 3
+	}
+
+	public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 	{
 		#region Fields
+
+		public int mainMenu = 0;
+		public int killCount = 3;
+
+		public GameObject mapCam;
 
 		public string playerPrefabString;
 		public GameObject playerPrefab;
@@ -39,6 +52,9 @@ namespace Com.Jackseb.FPS
 		private Text uiMyKills;
 		private Text uiMyDeaths;
 		private Transform uiScoreboard;
+		private Transform uiEndgame;
+
+		private GameState state = GameState.Waiting;
 
 		#endregion
 
@@ -57,6 +73,8 @@ namespace Com.Jackseb.FPS
 
 		private void Start()
 		{
+			mapCam.SetActive(false);
+
 			ValidateConnection();
 			InitializeUI();
 			NewPlayer_S(Launcher.myProfile);
@@ -65,6 +83,11 @@ namespace Com.Jackseb.FPS
 
 		private void Update()
 		{
+			if (state == GameState.Ending)
+			{
+				return;
+			}
+
 			if (Input.GetKey(KeyCode.Tab))
 			{
 				Scoreboard(uiScoreboard);
@@ -110,6 +133,12 @@ namespace Com.Jackseb.FPS
 			}
 		}
 
+		public override void OnLeftRoom()
+		{
+			base.OnLeftRoom();
+			SceneManager.LoadScene(mainMenu);
+		}
+
 		#endregion
 
 		#region Methods
@@ -133,6 +162,7 @@ namespace Com.Jackseb.FPS
 			uiMyKills = GameObject.Find("HUD/Stats/Kills/Text").GetComponent<Text>();
 			uiMyDeaths = GameObject.Find("HUD/Stats/Deaths/Text").GetComponent<Text>();
 			uiScoreboard = GameObject.Find("HUD").transform.Find("Scoreboard").transform;
+			uiEndgame = GameObject.Find("Canvas").transform.Find("End Game").transform;
 
 			RefreshMyStats();
 		}
@@ -223,7 +253,67 @@ namespace Com.Jackseb.FPS
 		private void ValidateConnection()
 		{
 			if (PhotonNetwork.IsConnected) return;
-			SceneManager.LoadScene(0);
+			SceneManager.LoadScene(mainMenu);
+		}
+
+		private void StateCheck()
+		{
+			if (state == GameState.Ending)
+			{
+				EndGame();
+			}
+		}
+
+		private void ScoreCheck()
+		{
+			// define temporary	variables
+			bool detectwin = false;
+
+			// check to see if any player has met the win conditions
+			foreach (PlayerInfo a in playerInfo)
+			{
+				// free for all
+				if (a.kills >= killCount)
+				{
+					detectwin = true;
+					break;
+				}
+			}
+
+			// did we find a winner?
+			if (detectwin)
+			{
+				// are we the master client? is the game still going?
+				if (PhotonNetwork.IsMasterClient && state != GameState.Ending)
+				{
+					// if so, tell the other players that a winner has been detected
+					UpdatePlayers_S((int)GameState.Ending, playerInfo);
+				}
+			}
+		}
+
+		private void EndGame()
+		{
+			// set game state to ending
+			state = GameState.Ending;
+
+			// disable room
+			if (PhotonNetwork.IsMasterClient)
+			{
+				PhotonNetwork.DestroyAll();
+				PhotonNetwork.CurrentRoom.IsVisible = false;
+				PhotonNetwork.CurrentRoom.IsOpen = false;
+			}
+
+			// activate map camera
+			mapCam.SetActive(true);
+
+			// show end game ui
+			uiEndgame.gameObject.SetActive(true);
+			Scoreboard(uiEndgame.Find("Scoreboard"));
+
+			// wait x seconds and then return to main menu
+			StartCoroutine(End(7f));
 		}
 
 		#endregion
@@ -266,13 +356,14 @@ namespace Com.Jackseb.FPS
 
 			playerInfo.Add(p);
 
-			UpdatePlayers_S(playerInfo);
+			UpdatePlayers_S((int)state, playerInfo);
 		}
 
-		public void UpdatePlayers_S(List<PlayerInfo> info)
+		public void UpdatePlayers_S(int state, List<PlayerInfo> info)
 		{
-			object[] package = new object[info.Count];
+			object[] package = new object[info.Count + 1];
 
+			package[0] = state;
 			for (int i = 0; i < info.Count; i++)
 			{
 				object[] piece = new object[7];
@@ -285,7 +376,7 @@ namespace Com.Jackseb.FPS
 				piece[5] = info[i].kills;
 				piece[6] = info[i].deaths;
 
-				package[i] = piece;
+				package[i + 1] = piece;
 			}
 
 			PhotonNetwork.RaiseEvent(
@@ -298,9 +389,10 @@ namespace Com.Jackseb.FPS
 
 		public void UpdatePlayers_R (object[] data)
 		{
+			state = (GameState)data[0];
 			playerInfo = new List<PlayerInfo>();
 
-			for (int i = 0; i < data.Length; i++)
+			for (int i = 1; i < data.Length; i++)
 			{
 				object[] extract = (object[])data[i];
 
@@ -318,8 +410,10 @@ namespace Com.Jackseb.FPS
 
 				playerInfo.Add(p);
 
-				if (PhotonNetwork.LocalPlayer.ActorNumber == p.actor) myInd = i;
+				if (PhotonNetwork.LocalPlayer.ActorNumber == p.actor) myInd = i - 1;
 			}
+
+			StateCheck();
 		}
 
 		public void ChangeStat_S (int actor, byte stat, byte amt)
@@ -362,6 +456,21 @@ namespace Com.Jackseb.FPS
 					return;
 				}
 			}
+
+			ScoreCheck();
+		}
+
+		#endregion
+
+		#region Coroutines
+
+		private IEnumerator End (float p_wait)
+		{
+			yield return new WaitForSeconds(p_wait);
+
+			// disconnect
+			PhotonNetwork.AutomaticallySyncScene = false;
+			PhotonNetwork.LeaveRoom();
 		}
 
 		#endregion

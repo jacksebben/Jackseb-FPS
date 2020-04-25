@@ -22,7 +22,7 @@ MonoBehaviour:
   pellets: 9
   slot: 0
   firerate: 0.88
-  bloom: 20
+  bloom: 25
   recoil: 15
   kickback: 0.2
   canADS: 1

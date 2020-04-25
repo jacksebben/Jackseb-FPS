@@ -23,14 +23,14 @@ MonoBehaviour:
   slot: 0
   firerate: 1.5
   bloom: 0.01
-  recoil: 2
+  recoil: 0.25
   kickback: 0.15
   canADS: 1
   aimSpeed: 8
   canReload: 1
   reloadTime: 3.7
   mainFOV: 0.25
-  weaponFOV: 0.06
+  weaponFOV: 0.02
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
   reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
   finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}

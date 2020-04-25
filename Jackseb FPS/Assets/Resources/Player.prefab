@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadout:
-  - {fileID: 11400000, guid: ec5d3b539aae9c3478db838f79e1f48e, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a940111d561716e4a9d68ad810676dfd, type: 2}
   - {fileID: 11400000, guid: 73abaceea91da15499b4d06c41ec9161, type: 2}
   currentGunData: {fileID: 0}
