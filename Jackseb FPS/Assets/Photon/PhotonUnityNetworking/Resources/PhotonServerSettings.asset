@@ -42,5 +42,6 @@ MonoBehaviour:
   - PickupWeapon
   - SyncProfile
   - SprintSound
+  - ReloadRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1

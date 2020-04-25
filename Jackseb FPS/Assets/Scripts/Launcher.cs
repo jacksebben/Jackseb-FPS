@@ -168,7 +168,7 @@ namespace Com.Jackseb.FPS
 		{
 			tabMain.SetActive(false);
 			tabRooms.SetActive(false);
-			tabRooms.SetActive(false);
+			tabCreate.SetActive(false);
 		}
 
 		public void TabOpenMain()

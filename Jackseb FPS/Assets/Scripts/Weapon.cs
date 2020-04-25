@@ -128,7 +128,7 @@ namespace Com.Jackseb.FPS
 						}
 					}
 
-					if (Input.GetKeyDown(KeyCode.R) && currentGunData.CanReload()) lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
+					if (Input.GetKeyDown(KeyCode.R) && currentGunData.CanReload() && !isReloading) photonView.RPC("ReloadRPC", RpcTarget.AllBuffered);
 
 					// Cooldown
 					if (currentCooldown > 0) currentCooldown -= Time.deltaTime;
@@ -156,23 +156,26 @@ namespace Com.Jackseb.FPS
 
 		#region Private Methods
 
+		[PunRPC]
+		private void ReloadRPC()
+		{
+			StartCoroutine(Reload(currentGunData.reloadTime));
+		}
+
 		IEnumerator Reload(float p_wait)
 		{
-			if (photonView.IsMine)
-			{
-				isReloading = true;
-				currentWeapon.SetActive(false);
+			isReloading = true;
+			currentWeapon.SetActive(false);
 
-				// Sound
-				sfx.clip = currentGunData.reloadSound;
-				sfx.Play();
+			// Sound
+			sfx.clip = currentGunData.reloadSound;
+			sfx.Play();
 
-				yield return new WaitForSeconds(p_wait);
+			yield return new WaitForSeconds(p_wait);
 
-				currentGunData.Reload();
-				currentWeapon.SetActive(true);
-				isReloading = false;
-			}
+			currentGunData.Reload();
+			currentWeapon.SetActive(true);
+			isReloading = false;
 
 			// Sound
 			sfx.PlayOneShot(currentGunData.finishReloadSound);
@@ -216,6 +219,7 @@ namespace Com.Jackseb.FPS
 		{
 			// find the weapon from a library
 			Gun newWeapon = GunLibrary.FindGun(name);
+			newWeapon.Initialize();
 
 			loadout[newWeapon.slot] = newWeapon;
 			newWeapon.Initialize();
@@ -282,32 +286,67 @@ namespace Com.Jackseb.FPS
 
 				// Raycast
 				RaycastHit t_hit = new RaycastHit();
-				Debug.DrawRay(t_spawn.position, t_bloom * currentGunData.range, Color.red, 1f);
-				if (Physics.Raycast(t_spawn.position, t_bloom, out t_hit, currentGunData.range, canBeShot))
+
+				if (currentGunData.boxCast)
 				{
-					if (t_hit.collider.gameObject.layer != 11)
+					if (Physics.BoxCast(transform.position, new Vector3(0.5f, 1, 0.5f), transform.forward, out t_hit, transform.localRotation, currentGunData.range, canBeShot))
 					{
-						GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
-						t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
-						Destroy(t_newHole, 5f);
-					}
-
-					if (photonView.IsMine)
-					{
-						// Shooting other player on network
-						if (t_hit.collider.gameObject.layer == 11)
+						if (t_hit.collider.gameObject.layer != 11)
 						{
-							float t_multiplier = 1;
+							GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
+							t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
+							Destroy(t_newHole, 5f);
+						}
 
-							if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
-							
-							// Give damage
-							t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+						if (photonView.IsMine)
+						{
+							// Shooting other player on network
+							if (t_hit.collider.gameObject.layer == 11)
+							{
+								float t_multiplier = 1;
 
-							// Show hitmarker
-							hitmarkerImage.color = Color.white;
-							sfx.PlayOneShot(hitmarkerSound);
-							hitmarkerWait = 0.5f;
+								if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
+
+								// Give damage
+								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+
+								// Show hitmarker
+								hitmarkerImage.color = Color.white;
+								sfx.PlayOneShot(hitmarkerSound);
+								hitmarkerWait = 0.5f;
+							}
+						}
+					}
+				}
+				else
+				{
+					Debug.DrawRay(t_spawn.position, t_bloom * currentGunData.range, Color.red, 1f);
+					if (Physics.Raycast(t_spawn.position, t_bloom, out t_hit, currentGunData.range, canBeShot))
+					{
+						if (t_hit.collider.gameObject.layer != 11)
+						{
+							GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
+							t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
+							Destroy(t_newHole, 5f);
+						}
+
+						if (photonView.IsMine)
+						{
+							// Shooting other player on network
+							if (t_hit.collider.gameObject.layer == 11)
+							{
+								float t_multiplier = 1;
+
+								if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
+
+								// Give damage
+								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+
+								// Show hitmarker
+								hitmarkerImage.color = Color.white;
+								sfx.PlayOneShot(hitmarkerSound);
+								hitmarkerWait = 0.5f;
+							}
 						}
 					}
 				}

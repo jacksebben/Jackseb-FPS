@@ -88,7 +88,7 @@ namespace Com.Jackseb.FPS
 				return;
 			}
 
-			if (Input.GetKey(KeyCode.Tab))
+			if (Input.GetKey(KeyCode.Tab) || Input.GetKey(KeyCode.F1))
 			{
 				Scoreboard(uiScoreboard);
 			}
@@ -313,7 +313,7 @@ namespace Com.Jackseb.FPS
 			Scoreboard(uiEndgame.Find("Scoreboard"));
 
 			// wait x seconds and then return to main menu
-			StartCoroutine(End(7f));
+			StartCoroutine(End(10f));
 		}
 
 		#endregion
@@ -453,7 +453,7 @@ namespace Com.Jackseb.FPS
 					if (i == myInd) RefreshMyStats();
 					if (uiScoreboard.gameObject.activeSelf) Scoreboard(uiScoreboard);
 
-					return;
+					break;
 				}
 			}
 

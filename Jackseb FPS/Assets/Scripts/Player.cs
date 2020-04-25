@@ -124,8 +124,6 @@ namespace Com.Jackseb.FPS
 
 			origin = normalCam.transform.localPosition;
 
-			if (Camera.main) Camera.main.enabled = false;
-
 			rig = GetComponent<Rigidbody>();
 			weaponParentOrigin = weaponParent.localPosition;
 			weaponParentCurrentPos = weaponParentOrigin;

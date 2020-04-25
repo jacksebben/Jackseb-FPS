@@ -28,9 +28,10 @@ MonoBehaviour:
   recoil: 15
   kickback: 0.2
   canADS: 1
+  boxCast: 0
   aimSpeed: 8
   canReload: 1
-  reloadTime: 2.8
+  reloadTime: 2.5
   mainFOV: 0.7
   weaponFOV: 0.45
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}

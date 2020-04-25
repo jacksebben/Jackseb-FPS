@@ -39,6 +39,8 @@ namespace Com.Jackseb.FPS
 		public float kickback;
 		[Tooltip("Can this gun aim down a sight?")]
 		public bool canADS;
+		[Tooltip("Check for hit detection with a box instead of a ray?")]
+		public bool boxCast;
 		[Tooltip("Speed to aim down the sights (Time.deltaTime)")]
 		public float aimSpeed;
 		[Tooltip("Does this gun need to reload?")]

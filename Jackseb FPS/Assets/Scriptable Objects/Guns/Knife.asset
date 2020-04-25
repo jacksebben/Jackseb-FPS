@@ -23,9 +23,12 @@ MonoBehaviour:
   slot: 2
   firerate: 0.55
   bloom: 0
+  movingBloom: 0
+  jumpingBloom: 0
   recoil: -30
   kickback: -2
   canADS: 0
+  boxCast: 1
   aimSpeed: 0
   canReload: 0
   reloadTime: 0

@@ -21,22 +21,23 @@ MonoBehaviour:
   burst: 0
   pellets: 1
   slot: 0
-  firerate: 1.5
+  firerate: 1
   bloom: 0.02
   movingBloom: 0.2
   jumpingBloom: 2
   recoil: 0.25
   kickback: 0.15
   canADS: 1
-  aimSpeed: 8
+  boxCast: 0
+  aimSpeed: 20
   canReload: 1
-  reloadTime: 3.7
-  mainFOV: 0.25
-  weaponFOV: 0.035
+  reloadTime: 2.6
+  mainFOV: 0.33
+  weaponFOV: 0.03
   gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
   reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
   finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
-  pitchRandomization: 0.1
+  pitchRandomization: 0.05
   prefab: {fileID: 7269680795320770078, guid: ca0152cfa9496dd469efe24b9d2af9ac, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: 03ac23fa7cf9bcb4f8ce6c52924ce0f3,
     type: 3}
