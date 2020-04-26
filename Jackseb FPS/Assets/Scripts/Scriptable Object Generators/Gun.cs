@@ -33,10 +33,22 @@ namespace Com.Jackseb.FPS
 		public float movingBloom;
 		[Tooltip("The spread of the weapon when jumping")]
 		public float jumpingBloom;
+		[Tooltip("The multiplier for bloom when scoping")]
+		public float ADSBloomMultipler;
 		[Tooltip("How much gun rotates on fire")]
 		public float recoil;
 		[Tooltip("How much gun moves back on fire")]
 		public float kickback;
+		[Tooltip("Does this gun fire projectiles instead of raycasting?")]
+		public bool projectileBased;
+		[Tooltip("Must the gun be aimed down sight in order to shoot?")]
+		public bool mustAimFirst;
+		[Tooltip("The projectile the gun shoots")]
+		public Projectile projectile;
+		[Tooltip("How many seconds until the projectile despawns")]
+		public int destroyTime;
+		[Tooltip("What plays when the projectile hits something")]
+		public AudioClip hitSound;
 		[Tooltip("Can this gun aim down a sight?")]
 		public bool canADS;
 		[Tooltip("Check for hit detection with a box instead of a ray?")]
@@ -71,10 +83,17 @@ namespace Com.Jackseb.FPS
 		{
 			stash = ammo;
 			clip = clipSize;
+
+			if (projectileBased)
+			{
+				projectile.Initialize(this);
+			}
 		}
 
-		public bool CanFireBullet()
+		public bool CanFireBullet(bool isAiming)
 		{
+			if (mustAimFirst && !isAiming) return false;
+
 			if (canReload)
 			{
 				if (clip > 0)

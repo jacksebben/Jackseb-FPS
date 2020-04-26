@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf76bd93fe576743be8a174ef2d3b32, type: 3}
+  m_Name: Buzzbow
+  m_EditorClassIdentifier: 
+  gunName: Buzzbow
+  damage: 100
+  headshotMultiplier: 1.7
+  range: 1000
+  clipSize: 1
+  ammo: 4
+  burst: 0
+  pellets: 1
+  slot: 0
+  firerate: 0.2
+  bloom: 0.02
+  movingBloom: 0.2
+  jumpingBloom: 2
+  ADSBloomMultipler: 0.5
+  recoil: 2
+  kickback: 0.05
+  projectileBased: 1
+  mustAimFirst: 1
+  projectile: {fileID: 11400000, guid: 74ec7e9215749fb42b9219a24d5f0ca7, type: 2}
+  destroyTime: 5
+  hitSound: {fileID: 8300000, guid: 77df9feb2e9ad8342891919a98498ff3, type: 3}
+  canADS: 1
+  boxCast: 0
+  aimSpeed: 8
+  canReload: 1
+  reloadTime: 2
+  mainFOV: 0.7
+  weaponFOV: 0.45
+  gunshotSound: {fileID: 8300000, guid: 2d00c523ef8bbca44bc46b11909266f7, type: 3}
+  reloadSound: {fileID: 8300000, guid: 059c47b678fb4a74bb9cdaf0a6aa9873, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: 63b2f5ea14d188d4693b61e649b2fd48, type: 3}
+  pitchRandomization: 0.05
+  prefab: {fileID: 7269680795320770078, guid: c3316b1509ac4704fa53c21fa1b935ff, type: 3}
+  displayPrefab: {fileID: 7269680795320770078, guid: 8b7d8a3d82ea35a499b07c2b496c55d2,
+    type: 3}

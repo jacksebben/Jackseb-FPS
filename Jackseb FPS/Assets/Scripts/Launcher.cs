@@ -53,6 +53,13 @@ namespace Com.Jackseb.FPS
 		}
 	}
 
+	[System.Serializable]
+	public class MapData
+	{
+		public string name;
+		public int scene;
+	}
+
 	public class Launcher : MonoBehaviourPunCallbacks
 	{
 		[Header("Game Version")]
@@ -66,12 +73,20 @@ namespace Com.Jackseb.FPS
 
 		public GameObject connectingText;
 		public GameObject versionText;
+		public GameObject regionText;
+		public GameObject[] hideWhileConnecting;
 
 		public InputField usernameField;
 		public InputField roomNameField;
+		public Text mapValue;
 		public Slider maxPlayerSlider;
 		public Text maxPlayerValue;
+		public Slider killCountSlider;
+		public Text killCountValue;
 		public static ProfileData myProfile = new ProfileData();
+
+		public MapData[] maps;
+		private int currentMap = 0;
 
 		private List<RoomInfo> roomList;
 
@@ -80,7 +95,10 @@ namespace Com.Jackseb.FPS
 			TabCloseAll();
 
 			connectingText.SetActive(true);
-			versionText.SetActive(false);
+			foreach (GameObject obj in hideWhileConnecting)
+			{
+				obj.SetActive(false);
+			}
 
 			PhotonNetwork.AutomaticallySyncScene = true;
 
@@ -93,12 +111,23 @@ namespace Com.Jackseb.FPS
 		private void Update()
 		{
 			versionText.GetComponent<Text>().text = "Version " + version;
+			if (PhotonNetwork.CloudRegion == "us")
+			{
+				regionText.GetComponent<Text>().text = "US-East";
+			}
+			else if (PhotonNetwork.CloudRegion == "usw")
+			{
+				regionText.GetComponent<Text>().text = "US-West";
+			}
 		}
 
 		public override void OnConnectedToMaster()
 		{
 			connectingText.SetActive(false);
-			versionText.SetActive(true);
+			foreach (GameObject obj in hideWhileConnecting)
+			{
+				obj.SetActive(true);
+			}
 
 			TabOpenMain();
 
@@ -133,7 +162,10 @@ namespace Com.Jackseb.FPS
 		public void Join()
 		{
 			connectingText.SetActive(true);
-			versionText.SetActive(false);
+			foreach (GameObject obj in hideWhileConnecting)
+			{
+				obj.SetActive(false);
+			}
 
 			TabCloseAll();
 
@@ -143,15 +175,21 @@ namespace Com.Jackseb.FPS
 		public void Create()
 		{
 			connectingText.SetActive(true);
-			versionText.SetActive(false);
+			foreach (GameObject obj in hideWhileConnecting)
+			{
+				obj.SetActive(false);
+			}
 
 			TabCloseAll();
 
 			RoomOptions options = new RoomOptions();
 			options.MaxPlayers = (byte)maxPlayerSlider.value;
 
+			options.CustomRoomPropertiesForLobby = new string[] { "map", "killCount" };
+
 			PhotonHash properties = new PhotonHash();
-			properties.Add("map", 0);
+			properties.Add("map", currentMap);
+			properties.Add("killCount", killCountSlider.value * 5);
 			options.CustomRoomProperties = properties;
 
 			PhotonNetwork.CreateRoom(roomNameField.text, options);
@@ -159,12 +197,19 @@ namespace Com.Jackseb.FPS
 
 		public void ChangeMap()
 		{
-
+			currentMap++;
+			if (currentMap >= maps.Length) currentMap = 0;
+			mapValue.text = "MAP: " + maps[currentMap].name.ToUpper();
 		}
 
 		public void ChangeMaxPlayerSlider(float p_value)
 		{
 			maxPlayerValue.text = Mathf.RoundToInt(p_value).ToString();
+		}
+
+		public void ChangeKillCountSlider(float p_value)
+		{
+			killCountValue.text = Mathf.RoundToInt(p_value * 5).ToString();
 		}
 
 		public void TabCloseAll()
@@ -190,6 +235,17 @@ namespace Com.Jackseb.FPS
 		{
 			TabCloseAll();
 			tabCreate.SetActive(true);
+
+			roomNameField.text = "";
+
+			currentMap = 0;
+			mapValue.text = "MAP: " + maps[currentMap].name.ToUpper();
+
+			maxPlayerSlider.value = 8;
+			maxPlayerValue.text = Mathf.RoundToInt(maxPlayerSlider.value).ToString();
+
+			killCountSlider.value = 5;
+			killCountValue.text = Mathf.RoundToInt(killCountSlider.value * 5).ToString();
 		}
 
 		private void ClearRoomList()
@@ -224,6 +280,15 @@ namespace Com.Jackseb.FPS
 				newRoomButton.transform.Find("Name").GetComponent<Text>().text = a.Name;
 				newRoomButton.transform.Find("Players").GetComponent<Text>().text = a.PlayerCount + " / " + a.MaxPlayers;
 
+				if (a.CustomProperties.ContainsKey("map"))
+				{
+					newRoomButton.transform.Find("Map/Name").GetComponent<Text>().text = maps[(int)a.CustomProperties["map"]].name;
+				}
+				else
+				{
+					newRoomButton.transform.Find("Map/Name").GetComponent<Text>().text = "-----";
+				}
+
 				newRoomButton.GetComponent<Button>().onClick.AddListener(delegate { JoinRoom(newRoomButton.transform); });
 			}
 
@@ -246,7 +311,7 @@ namespace Com.Jackseb.FPS
 			if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
 			{
 				Data.SaveProfile(myProfile);
-				PhotonNetwork.LoadLevel(1);
+				PhotonNetwork.LoadLevel(maps[currentMap].scene);
 			}
 		}
 	}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Knife
   m_EditorClassIdentifier: 
   gunName: Knife
-  damage: 1000
+  damage: 999
   headshotMultiplier: 1
   range: 1.5
   clipSize: 0
@@ -27,6 +27,10 @@ MonoBehaviour:
   jumpingBloom: 0
   recoil: -30
   kickback: -2
+  projectileBased: 0
+  mustAimFirst: 0
+  projectile: {fileID: 0}
+  destroyTime: 0
   canADS: 0
   boxCast: 1
   aimSpeed: 0
@@ -34,7 +38,7 @@ MonoBehaviour:
   reloadTime: 0
   mainFOV: 0.7
   weaponFOV: 0.7
-  gunshotSound: {fileID: 8300000, guid: 68e6fae65f1fba046adcad651ebcf2d1, type: 3}
+  gunshotSound: {fileID: 8300000, guid: 563218fe2e1baf24891f2eef20c1d524, type: 3}
   reloadSound: {fileID: 0}
   finishReloadSound: {fileID: 0}
   pitchRandomization: 0

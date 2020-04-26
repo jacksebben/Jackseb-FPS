@@ -21,7 +21,7 @@ namespace Com.Jackseb.FPS
 		public bool isAiming = false;
 
 		private float currentCooldown;
-		private int currentIndex;
+		private int currentIndex = -1;
 		private GameObject currentWeapon;
 
 		private Image hitmarkerImage;
@@ -45,12 +45,10 @@ namespace Com.Jackseb.FPS
 			hitmarkerImage.color = new Color(1, 1, 1, 0);
 			if (loadout[0] != null)
 			{
-				Equip(2);
 				Equip(0);
 			}
 			else if (loadout[1] != null)
 			{
-				Equip(2);
 				Equip(1);
 			}
 			else if (loadout[2] != null)
@@ -81,6 +79,8 @@ namespace Com.Jackseb.FPS
 		{
 			if (Pause.paused && photonView.IsMine) return;
 
+			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(15, PhotonNetwork.LocalPlayer.ActorNumber, 1);
+
 			if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1) && loadout[0] != null)
 			{
 				photonView.RPC("Equip", RpcTarget.AllBuffered, 0);
@@ -109,7 +109,7 @@ namespace Com.Jackseb.FPS
 					{
 						if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && !isReloading)
 						{
-							if (currentGunData.CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+							if (currentGunData.CanFireBullet(isAiming)) photonView.RPC("Shoot", RpcTarget.All);
 							else if (currentGunData.CanReload() && currentGunData.canReload)
 							{
 								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
@@ -120,7 +120,7 @@ namespace Com.Jackseb.FPS
 					{
 						if (Input.GetMouseButton(0) && currentCooldown <= 0 && !isReloading)
 						{
-							if (currentGunData.CanFireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+							if (currentGunData.CanFireBullet(isAiming)) photonView.RPC("Shoot", RpcTarget.All);
 							else if (currentGunData.CanReload() && currentGunData.canReload)
 							{
 								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
@@ -151,6 +151,32 @@ namespace Com.Jackseb.FPS
 			}
 		}
 
+		private void OnTriggerEnter(Collider other)
+		{
+			if (other.gameObject.tag == "Killzone")
+			{
+				Debug.Log("lava");
+				if (photonView.IsMine)
+				{
+					photonView.RPC("TakeDamage", RpcTarget.AllBuffered, 999, 0, 1f);
+				}
+			}
+
+			if (other.gameObject.layer == 12)
+			{
+				// find the weapon from a library
+				Projectile newProjectile = ProjectileLibrary.FindProjectile(other.gameObject.name);
+
+				if (photonView.IsMine)
+				{
+					ProjectileHelper script = other.transform.root.GetComponent<ProjectileHelper>();
+					photonView.RPC("TakeDamage", RpcTarget.AllBuffered, newProjectile.GetDamage(), newProjectile.GetActorNumber(), newProjectile.GetMultiplier());
+				}
+
+				Destroy(other.gameObject);
+			}
+		}
+
 		#endregion
 
 
@@ -159,7 +185,10 @@ namespace Com.Jackseb.FPS
 		[PunRPC]
 		private void ReloadRPC()
 		{
-			StartCoroutine(Reload(currentGunData.reloadTime));
+			if (photonView.IsMine)
+			{
+				StartCoroutine(Reload(currentGunData.reloadTime));
+			}
 		}
 
 		IEnumerator Reload(float p_wait)
@@ -168,8 +197,7 @@ namespace Com.Jackseb.FPS
 			currentWeapon.SetActive(false);
 
 			// Sound
-			sfx.clip = currentGunData.reloadSound;
-			sfx.Play();
+			sfx.PlayOneShot(currentGunData.reloadSound);
 
 			yield return new WaitForSeconds(p_wait);
 
@@ -222,9 +250,8 @@ namespace Com.Jackseb.FPS
 			newWeapon.Initialize();
 
 			loadout[newWeapon.slot] = newWeapon;
-			newWeapon.Initialize();
-			Equip(0);
-			Equip(1);
+
+			currentIndex = -1;
 			Equip(newWeapon.slot);
 		}
 
@@ -277,7 +304,7 @@ namespace Com.Jackseb.FPS
 				if (GetComponent<Player>().jumped) t_factor = currentGunData.jumpingBloom;
 				else if (Mathf.Abs(GetComponent<Player>().t_hMove) > 0.5 || Mathf.Abs(GetComponent<Player>().t_vMove) > 0.5) t_factor = currentGunData.movingBloom;
 
-				if (isAiming) t_factor *= 0.5f;
+				if (isAiming) t_factor *= currentGunData.ADSBloomMultipler;
 
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.up;
 				t_bloom += Random.Range(-t_factor, t_factor) * t_spawn.right;
@@ -318,6 +345,13 @@ namespace Com.Jackseb.FPS
 						}
 					}
 				}
+				else if (currentGunData.projectileBased)
+				{
+					if (photonView.IsMine)
+					{
+						photonView.RPC("ShootProjectile", RpcTarget.All, currentGunData.gunName, t_bloom, PhotonNetwork.LocalPlayer.ActorNumber);
+					}
+				}
 				else
 				{
 					Debug.DrawRay(t_spawn.position, t_bloom * currentGunData.range, Color.red, 1f);
@@ -353,9 +387,8 @@ namespace Com.Jackseb.FPS
 			}
 
 			// Sound
-			sfx.clip = currentGunData.gunshotSound;
 			sfx.pitch = 1 - currentGunData.pitchRandomization + Random.Range(-currentGunData.pitchRandomization, currentGunData.pitchRandomization);
-			sfx.Play();
+			sfx.PlayOneShot(currentGunData.gunshotSound);
 
 			// Gun FX
 			currentWeapon.transform.Rotate(-currentGunData.recoil, 0, 0);
@@ -366,6 +399,26 @@ namespace Com.Jackseb.FPS
 		private void TakeDamage(int p_damage, int p_actor, float p_multi)
 		{
 			GetComponent<Player>().TakeDamage(p_damage, p_actor, p_multi);
+		}
+
+		[PunRPC]
+		private void ShootProjectile(string name, Vector3 direction, int actorNum)
+		{
+			// find the weapon from a library
+			Gun newWeapon = GunLibrary.FindGun(name);
+
+			newWeapon.projectile.SetActorNumber(actorNum);
+
+			GameObject projectile = Instantiate(newWeapon.projectile.prefab) as GameObject;
+			projectile.name = newWeapon.projectile.projectileName;
+			projectile.transform.position = transform.Find("Cameras/Normal Camera").position + (transform.Find("Cameras/Normal Camera").forward * 2);
+			projectile.transform.LookAt(transform.position + direction);
+			Rigidbody rb = projectile.GetComponent<Rigidbody>();
+			rb.velocity = direction * 40;
+
+			projectile.GetComponent<ProjectileHelper>().hitSound = newWeapon.hitSound;
+
+			Destroy(projectile, newWeapon.destroyTime);
 		}
 
 		#endregion

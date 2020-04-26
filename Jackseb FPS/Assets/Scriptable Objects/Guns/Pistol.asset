@@ -25,17 +25,23 @@ MonoBehaviour:
   bloom: 2
   movingBloom: 10
   jumpingBloom: 20
+  ADSBloomMultipler: 0.5
   recoil: 7
   kickback: 0.15
+  projectileBased: 0
+  mustAimFirst: 0
+  projectile: {fileID: 0}
+  destroyTime: 0
   canADS: 1
+  boxCast: 0
   aimSpeed: 12
   canReload: 1
   reloadTime: 2.27
   mainFOV: 0.7
   weaponFOV: 0.6
-  gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
-  reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
-  finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
+  gunshotSound: {fileID: 8300000, guid: be4b147cbc9d1744d973185b55636afd, type: 3}
+  reloadSound: {fileID: 8300000, guid: 6e7c081f69773244eacce1b4981ca28c, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: e21754453e8502442bc2b6f9bba02182, type: 3}
   pitchRandomization: 0.025
   prefab: {fileID: 7269680795320770078, guid: 6145a4b6e5a32df498422d46d7245a1e, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: 03c4c3c9ff60e5a4db0cc6dbf695921e,

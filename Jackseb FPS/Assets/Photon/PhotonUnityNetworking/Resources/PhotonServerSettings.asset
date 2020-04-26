@@ -43,5 +43,6 @@ MonoBehaviour:
   - SyncProfile
   - SprintSound
   - ReloadRPC
+  - ShootProjectile
   DisableAutoOpenWizard: 1
   ShowSettings: 1

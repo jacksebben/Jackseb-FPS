@@ -39,6 +39,7 @@ namespace Com.Jackseb.FPS
 
 		public int mainMenu = 0;
 		public int killCount = 3;
+		public bool perpetual = false;
 
 		public GameObject mapCam;
 
@@ -64,7 +65,8 @@ namespace Com.Jackseb.FPS
 		{
 			NewPlayer,
 			UpdatePlayers,
-			ChangeStat
+			ChangeStat,
+			NewMatch
 		}
 
 		#endregion
@@ -74,6 +76,8 @@ namespace Com.Jackseb.FPS
 		private void Start()
 		{
 			mapCam.SetActive(false);
+
+			killCount = Mathf.RoundToInt((float)PhotonNetwork.CurrentRoom.CustomProperties["killCount"]);
 
 			ValidateConnection();
 			InitializeUI();
@@ -301,8 +305,12 @@ namespace Com.Jackseb.FPS
 			if (PhotonNetwork.IsMasterClient)
 			{
 				PhotonNetwork.DestroyAll();
-				PhotonNetwork.CurrentRoom.IsVisible = false;
-				PhotonNetwork.CurrentRoom.IsOpen = false;
+
+				if (!perpetual)
+				{
+					PhotonNetwork.CurrentRoom.IsVisible = false;
+					PhotonNetwork.CurrentRoom.IsOpen = false;
+				}
 			}
 
 			// activate map camera
@@ -460,6 +468,41 @@ namespace Com.Jackseb.FPS
 			ScoreCheck();
 		}
 
+		public void NewMatch_S()
+		{
+			PhotonNetwork.RaiseEvent(
+				(byte)EventCodes.NewMatch,
+				null,
+				new RaiseEventOptions { Receivers = ReceiverGroup.All },
+				new SendOptions { Reliability = true }
+			);
+		}
+
+		public void NewMatch_R()
+		{
+			// set game state to waiting
+			state = GameState.Waiting;
+
+			// deactivate map camera
+			mapCam.SetActive(false);
+
+			//hide end game ui
+			uiEndgame.gameObject.SetActive(false);
+
+			// reset scores
+			foreach (PlayerInfo p in playerInfo)
+			{
+				p.kills = 0;
+				p.deaths = 0;
+			}
+
+			// reset ui
+			RefreshMyStats();
+
+			// spawn
+			Spawn();
+		}
+
 		#endregion
 
 		#region Coroutines
@@ -468,9 +511,20 @@ namespace Com.Jackseb.FPS
 		{
 			yield return new WaitForSeconds(p_wait);
 
-			// disconnect
-			PhotonNetwork.AutomaticallySyncScene = false;
-			PhotonNetwork.LeaveRoom();
+			if (perpetual)
+			{
+				// new match
+				if (PhotonNetwork.IsMasterClient)
+				{
+					NewMatch_S();
+				}
+			}
+			else
+			{
+				// disconnect
+				PhotonNetwork.AutomaticallySyncScene = false;
+				PhotonNetwork.LeaveRoom();
+			}
 		}
 
 		#endregion

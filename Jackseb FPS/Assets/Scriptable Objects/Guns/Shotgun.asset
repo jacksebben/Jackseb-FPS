@@ -13,20 +13,25 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   gunName: Shotgun
-  damage: 26
+  damage: 7
   headshotMultiplier: 2
   range: 1000
-  clipSize: 8
-  ammo: 32
+  clipSize: 10
+  ammo: 30
   burst: 0
-  pellets: 9
+  pellets: 10
   slot: 0
-  firerate: 0.88
+  firerate: 0.82
   bloom: 50
   movingBloom: 70
   jumpingBloom: 90
+  ADSBloomMultipler: 0.5
   recoil: 15
   kickback: 0.2
+  projectileBased: 0
+  mustAimFirst: 0
+  projectile: {fileID: 0}
+  destroyTime: 0
   canADS: 1
   boxCast: 0
   aimSpeed: 8
@@ -34,10 +39,10 @@ MonoBehaviour:
   reloadTime: 2.5
   mainFOV: 0.7
   weaponFOV: 0.45
-  gunshotSound: {fileID: 8300000, guid: d27cd8dc4c94af7499e1384d9223b7a1, type: 3}
-  reloadSound: {fileID: 8300000, guid: 9b019b577dd297c4ea0199bca857c859, type: 3}
-  finishReloadSound: {fileID: 8300000, guid: f5ef9fa4cd3fde84d8b03c46af31e899, type: 3}
-  pitchRandomization: 0.1
+  gunshotSound: {fileID: 8300000, guid: fe06fb2e006b3644dbb28fa74ae24c1d, type: 3}
+  reloadSound: {fileID: 8300000, guid: def629cca5d181d468035192f8cb3e2c, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: 89e51dbf742dc2a438307afd876a2a9e, type: 3}
+  pitchRandomization: 0.05
   prefab: {fileID: 7269680795320770078, guid: a47e2b43d3837b04c815cdef5af35540, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: 4ea6f49b6ea1d254fb2ae48eeb4a58be,
     type: 3}

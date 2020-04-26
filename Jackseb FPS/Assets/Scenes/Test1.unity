@@ -620,7 +620,7 @@ PrefabInstance:
         type: 3}
       propertyPath: weapon
       value: 
-      objectReference: {fileID: 11400000, guid: 5e3bf727ae3810d428f04cfceafdae93,
+      objectReference: {fileID: 11400000, guid: 834beb3053a48144a81e96f9296d0267,
         type: 2}
     - target: {fileID: 4988099645749559878, guid: ba431a5e9b60074419048927b59f1a96,
         type: 3}
@@ -2738,7 +2738,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 1.8e-43}
+  m_BoundingSphereOverride: {x: 0, y: 3.67e-43, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -6384,7 +6384,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: 0
-  killCount: 25
+  killCount: 75
+  perpetual: 1
   mapCam: {fileID: 1288489468}
   playerPrefabString: Player
   playerPrefab: {fileID: 4152585652078937454, guid: ad713855997d2bc49a11e190bf730d67,

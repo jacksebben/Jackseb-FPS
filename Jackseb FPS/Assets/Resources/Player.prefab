@@ -83,7 +83,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 619874264157312335}
-  m_Material: {fileID: 13400000, guid: 80ef424e276b00d42a5676b296ed0147, type: 2}
+  m_Material: {fileID: 13400000, guid: 990c2cdce8bf13544bd4652d7951dee6, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.53
@@ -259,7 +259,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -508,7 +508,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3391634760136913324}
-  m_Material: {fileID: 13400000, guid: 80ef424e276b00d42a5676b296ed0147, type: 2}
+  m_Material: {fileID: 13400000, guid: 990c2cdce8bf13544bd4652d7951dee6, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.55
@@ -608,7 +608,7 @@ Camera:
   m_Depth: -2
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2359
+    m_Bits: 14647
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -699,7 +699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 500
-  sprintModifier: 1.5
+  sprintModifier: 1.25
   crouchModifier: 0.5
   jumpForce: 1000
   cameraTransformAmount: 0.8
@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadout:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 834beb3053a48144a81e96f9296d0267, type: 2}
   - {fileID: 11400000, guid: a940111d561716e4a9d68ad810676dfd, type: 2}
   - {fileID: 11400000, guid: 73abaceea91da15499b4d06c41ec9161, type: 2}
   currentGunData: {fileID: 0}
@@ -772,7 +772,7 @@ MonoBehaviour:
     m_Bits: 2355
   sfx: {fileID: 3202653730900408649}
   hitmarkerSound: {fileID: 8300000, guid: 2573b0fa140aa884c9d0d77f444b5306, type: 3}
-  equipSound: {fileID: 8300000, guid: 521ddd6c37cf83d49949369081fd6f1d, type: 3}
+  equipSound: {fileID: 8300000, guid: e31867b078871fd4da08b55dfc868c8c, type: 3}
   isAiming: 0
 --- !u!114 &-89469954322888530
 MonoBehaviour:

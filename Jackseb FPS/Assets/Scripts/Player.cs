@@ -202,8 +202,6 @@ namespace Com.Jackseb.FPS
 				rig.AddForce(Vector3.up * jumpForce);
 			}
 
-			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(Random.Range(15, 23), -1, 1); // TEST TAKE DAMAGE COMMAND
-
 			// Headbob
 			if (!isGrounded)
 			{
@@ -470,7 +468,7 @@ namespace Com.Jackseb.FPS
 					r_GameManager.Spawn();
 					r_GameManager.ChangeStat_S(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
 
-					if (p_actor >= 0)
+					if (p_actor >= 0 && p_actor != PhotonNetwork.LocalPlayer.ActorNumber)
 						r_GameManager.ChangeStat_S(p_actor, 0, 1);
 
 					PhotonNetwork.Destroy(gameObject);
