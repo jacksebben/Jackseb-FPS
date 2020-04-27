@@ -13,36 +13,39 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   gunName: Shotgun
+  slot: 0
+  mustAimFirst: 0
   damage: 7
   headshotMultiplier: 2
   range: 1000
-  clipSize: 10
-  ammo: 30
   burst: 0
   pellets: 10
-  slot: 0
   firerate: 0.82
   bloom: 50
   movingBloom: 70
   jumpingBloom: 90
-  ADSBloomMultipler: 0.5
+  ADSBloomMultipler: 0.75
   recoil: 15
   kickback: 0.2
   projectileBased: 0
-  mustAimFirst: 0
   projectile: {fileID: 0}
   destroyTime: 0
+  maxBounces: 0
+  hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 8
-  canReload: 1
-  reloadTime: 2.5
-  mainFOV: 0.7
-  weaponFOV: 0.45
+  needsReload: 1
+  playSoundIndividually: 1
+  clipSize: 8
+  ammo: 32
+  reloadTime: 0.32
   gunshotSound: {fileID: 8300000, guid: fe06fb2e006b3644dbb28fa74ae24c1d, type: 3}
-  reloadSound: {fileID: 8300000, guid: def629cca5d181d468035192f8cb3e2c, type: 3}
+  reloadSound: {fileID: 8300000, guid: 730957f75e2d9c543864dbaa8afe6457, type: 3}
   finishReloadSound: {fileID: 8300000, guid: 89e51dbf742dc2a438307afd876a2a9e, type: 3}
   pitchRandomization: 0.05
   prefab: {fileID: 7269680795320770078, guid: a47e2b43d3837b04c815cdef5af35540, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: 4ea6f49b6ea1d254fb2ae48eeb4a58be,
     type: 3}
+  mainFOV: 0.7
+  weaponFOV: 0.45

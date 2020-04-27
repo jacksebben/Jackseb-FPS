@@ -2,27 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileHelper : MonoBehaviour
+namespace Com.Jackseb.FPS
 {
-	public int spinx = 0;
-	public int spiny = 0;
-	public int spinz = 0;
-
-	public AudioSource audioS;
-	public AudioClip hitSound;
-
-	private void Update()
+	public class ProjectileHelper : MonoBehaviour
 	{
-		transform.Find("Design").Rotate(spinx, spiny, spinz);
+		public Projectile projParent;
 
-		if (GetComponent<Rigidbody>().velocity != Vector3.zero)
+		public int spinx = 0;
+		public int spiny = 0;
+		public int spinz = 0;
+
+		public AudioSource audioS;
+
+		private int currentBounces = 0;
+
+		private void Update()
 		{
-			transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity);
+			transform.Find("Design").Rotate(spinx, spiny, spinz);
+
+			if (GetComponent<Rigidbody>().velocity != Vector3.zero)
+			{
+				transform.LookAt(transform.position + GetComponent<Rigidbody>().velocity);
+			}
+		}
+
+		private void OnCollisionEnter(Collision collision)
+		{
+			audioS.PlayOneShot(projParent.GetHitSound());
+
+			currentBounces++;
+			if (currentBounces == projParent.gunParent.maxBounces)
+			{
+				Destroy(gameObject);
+			}
 		}
 	}
 
-	private void OnCollisionEnter(Collision collision)
-	{
-		audioS.PlayOneShot(hitSound);
-	}
 }

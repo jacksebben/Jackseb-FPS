@@ -36,6 +36,8 @@ namespace Com.Jackseb.FPS
 					Enable();
 				}
 			}
+
+			gunDisplay.transform.Rotate(0, 1, 0);
 		}
 
 		private void OnTriggerEnter(Collider other)

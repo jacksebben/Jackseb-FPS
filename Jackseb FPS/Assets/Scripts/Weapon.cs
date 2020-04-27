@@ -18,6 +18,7 @@ namespace Com.Jackseb.FPS
 		public AudioSource sfx;
 		public AudioClip hitmarkerSound;
 		public AudioClip equipSound;
+		public AudioClip emptyClip;
 		public bool isAiming = false;
 
 		private float currentCooldown;
@@ -28,6 +29,7 @@ namespace Com.Jackseb.FPS
 		private float hitmarkerWait;
 
 		private bool isReloading;
+		private bool holdingDownMouse1 = false;
 		private Coroutine lastReload = null;
 
 		#endregion
@@ -37,15 +39,19 @@ namespace Com.Jackseb.FPS
 
 		private void Start()
 		{
-			foreach (Gun a in loadout)
+			if (photonView.IsMine)
 			{
-				if (a != null) a.Initialize();
+				foreach (Gun a in loadout)
+				{
+					if (a != null) a.Initialize();
+				}
 			}
 			hitmarkerImage = GameObject.Find("HUD/Hitmarker").GetComponent<Image>();
 			hitmarkerImage.color = new Color(1, 1, 1, 0);
 			if (loadout[0] != null)
 			{
 				Equip(0);
+
 			}
 			else if (loadout[1] != null)
 			{
@@ -79,6 +85,8 @@ namespace Com.Jackseb.FPS
 		{
 			if (Pause.paused && photonView.IsMine) return;
 
+			holdingDownMouse1 = Input.GetMouseButtonDown(0);
+
 			if (Input.GetKeyDown(KeyCode.U)) TakeDamage(15, PhotonNetwork.LocalPlayer.ActorNumber, 1);
 
 			if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1) && loadout[0] != null)
@@ -110,9 +118,13 @@ namespace Com.Jackseb.FPS
 						if (Input.GetMouseButtonDown(0) && currentCooldown <= 0 && !isReloading)
 						{
 							if (currentGunData.CanFireBullet(isAiming)) photonView.RPC("Shoot", RpcTarget.All);
-							else if (currentGunData.CanReload() && currentGunData.canReload)
+							else if (currentGunData.CanReload() && currentGunData.needsReload)
 							{
-								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
+								lastReload = StartCoroutine(Reload(currentGunData.reloadTime, currentGunData.playSoundIndividually));
+							}
+							else if (currentGunData.GetStash() == 0)
+							{
+								sfx.PlayOneShot(emptyClip);
 							}
 						}
 					}
@@ -121,14 +133,19 @@ namespace Com.Jackseb.FPS
 						if (Input.GetMouseButton(0) && currentCooldown <= 0 && !isReloading)
 						{
 							if (currentGunData.CanFireBullet(isAiming)) photonView.RPC("Shoot", RpcTarget.All);
-							else if (currentGunData.CanReload() && currentGunData.canReload)
+							else if (currentGunData.CanReload() && currentGunData.needsReload)
 							{
-								lastReload = StartCoroutine(Reload(currentGunData.reloadTime));
+								lastReload = StartCoroutine(Reload(currentGunData.reloadTime, currentGunData.playSoundIndividually));
+							}
+							else if (currentGunData.GetStash() == 0 && holdingDownMouse1)
+							{
+								sfx.PlayOneShot(emptyClip);
 							}
 						}
 					}
 
 					if (Input.GetKeyDown(KeyCode.R) && currentGunData.CanReload() && !isReloading) photonView.RPC("ReloadRPC", RpcTarget.AllBuffered);
+					else if(Input.GetKeyDown(KeyCode.R) && !currentGunData.CanReload() && currentGunData.GetStash() == 0) sfx.PlayOneShot(emptyClip);
 
 					// Cooldown
 					if (currentCooldown > 0) currentCooldown -= Time.deltaTime;
@@ -187,26 +204,57 @@ namespace Com.Jackseb.FPS
 		{
 			if (photonView.IsMine)
 			{
-				StartCoroutine(Reload(currentGunData.reloadTime));
+				StartCoroutine(Reload(currentGunData.reloadTime, currentGunData.playSoundIndividually));
 			}
 		}
 
-		IEnumerator Reload(float p_wait)
+		IEnumerator Reload(float p_wait, bool individual)
 		{
 			isReloading = true;
 			currentWeapon.SetActive(false);
 
-			// Sound
-			sfx.PlayOneShot(currentGunData.reloadSound);
+			if (individual)
+			{
+				StartCoroutine(SingleReload(p_wait, (currentGunData.clipSize - currentGunData.GetClip())));
+			}
+			else
+			{
+				// Sound
+				sfx.PlayOneShot(currentGunData.reloadSound);
 
-			yield return new WaitForSeconds(p_wait);
+				yield return new WaitForSeconds(p_wait);
 
-			currentGunData.Reload();
-			currentWeapon.SetActive(true);
-			isReloading = false;
+				currentGunData.Reload();
+				currentWeapon.SetActive(true);
+				isReloading = false;
 
-			// Sound
-			sfx.PlayOneShot(currentGunData.finishReloadSound);
+				// Sound
+				sfx.PlayOneShot(currentGunData.finishReloadSound);
+			}
+		}
+
+		IEnumerator SingleReload(float p_wait, int i)
+		{
+			if (i != 0)
+			{
+				Debug.Log("Needs a reload");
+				sfx.PlayOneShot(currentGunData.reloadSound);
+
+				yield return new WaitForSeconds(p_wait);
+
+				i--;
+				StartCoroutine(SingleReload(p_wait, i));
+			}
+			else
+			{
+				Debug.Log("done reloading");
+				currentGunData.Reload();
+				currentWeapon.SetActive(true);
+				isReloading = false;
+
+				// Sound
+				sfx.PlayOneShot(currentGunData.finishReloadSound);
+			}
 		}
 
 		[PunRPC]
@@ -250,6 +298,8 @@ namespace Com.Jackseb.FPS
 			newWeapon.Initialize();
 
 			loadout[newWeapon.slot] = newWeapon;
+
+			newWeapon.Initialize();
 
 			currentIndex = -1;
 			Equip(newWeapon.slot);
@@ -316,7 +366,7 @@ namespace Com.Jackseb.FPS
 
 				if (currentGunData.boxCast)
 				{
-					if (Physics.BoxCast(transform.position, new Vector3(0.5f, 1, 0.5f), transform.forward, out t_hit, transform.localRotation, currentGunData.range, canBeShot))
+					if (Physics.BoxCast(transform.position, new Vector3(0.5f, 1, 0.5f), transform.Find("Cameras/Normal Camera").forward, out t_hit, transform.Find("Cameras/Normal Camera").localRotation, currentGunData.range, canBeShot))
 					{
 						if (t_hit.collider.gameObject.layer != 11)
 						{
@@ -416,7 +466,7 @@ namespace Com.Jackseb.FPS
 			Rigidbody rb = projectile.GetComponent<Rigidbody>();
 			rb.velocity = direction * 40;
 
-			projectile.GetComponent<ProjectileHelper>().hitSound = newWeapon.hitSound;
+			projectile.GetComponent<ProjectileHelper>().projParent = newWeapon.projectile;
 
 			Destroy(projectile, newWeapon.destroyTime);
 		}

@@ -234,7 +234,7 @@ namespace Com.Jackseb.FPS
 
 			//UI Refreshes
 			RefreshHealthBar();
-			if (r_Weapon.currentGunData != null && r_Weapon.currentGunData.canReload)
+			if (r_Weapon.currentGunData != null && r_Weapon.currentGunData.needsReload)
 			{
 				uiAmmo.enabled = true;
 				uiAmmoFrame.enabled = true;

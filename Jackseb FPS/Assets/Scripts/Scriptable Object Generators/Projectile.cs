@@ -11,6 +11,8 @@ namespace Com.Jackseb.FPS
 		public string projectileName;
 		[Tooltip("Prefab of projectile model")]
 		public GameObject prefab;
+		[HideInInspector]
+		public Gun gunParent;
 
 		private int actorNumber; // actor number of player who shot projectile
 		private int damage; // matches that of gun
@@ -19,6 +21,7 @@ namespace Com.Jackseb.FPS
 
 		public void Initialize(Gun gunParent)
 		{
+			this.gunParent = gunParent;
 			damage = gunParent.damage;
 			headshotMultiplier = gunParent.headshotMultiplier;
 			hitSound = gunParent.hitSound;
@@ -34,5 +37,7 @@ namespace Com.Jackseb.FPS
 		public int GetDamage() { return damage; }
 
 		public float GetMultiplier() { return headshotMultiplier; }
+
+		public AudioClip GetHitSound() { return hitSound; }
 	}
 }

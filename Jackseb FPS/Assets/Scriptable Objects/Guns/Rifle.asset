@@ -13,15 +13,14 @@ MonoBehaviour:
   m_Name: Rifle
   m_EditorClassIdentifier: 
   gunName: Rifle
-  damage: 32
+  slot: 0
+  mustAimFirst: 0
+  damage: 29
   headshotMultiplier: 3.17
   range: 1000
-  clipSize: 30
-  ammo: 90
   burst: 1
   pellets: 1
-  slot: 0
-  firerate: 0.1
+  firerate: 0.14
   bloom: 20
   movingBloom: 40
   jumpingBloom: 60
@@ -29,16 +28,17 @@ MonoBehaviour:
   recoil: 2
   kickback: 0.05
   projectileBased: 0
-  mustAimFirst: 0
   projectile: {fileID: 0}
   destroyTime: 0
+  hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 8
-  canReload: 1
+  needsReload: 1
+  playSoundIndividually: 0
+  clipSize: 30
+  ammo: 90
   reloadTime: 2.43
-  mainFOV: 0.7
-  weaponFOV: 0.3
   gunshotSound: {fileID: 8300000, guid: 46a46a6b56eb25a40b91045785d2de9c, type: 3}
   reloadSound: {fileID: 8300000, guid: 7534bc1f3b6c36341b4bdc72655845b8, type: 3}
   finishReloadSound: {fileID: 8300000, guid: c37c7dbdc2ed12f4aa72adacd702510c, type: 3}
@@ -46,3 +46,5 @@ MonoBehaviour:
   prefab: {fileID: 7269680795320770078, guid: 61fd5592a99af214391a4c91613b5234, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: b1656b233bdcc644396d30dffedc919e,
     type: 3}
+  mainFOV: 0.7
+  weaponFOV: 0.3

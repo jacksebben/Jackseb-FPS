@@ -32,10 +32,11 @@ MonoBehaviour:
   mustAimFirst: 0
   projectile: {fileID: 0}
   destroyTime: 0
+  hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 20
-  canReload: 1
+  needsReload: 1
   reloadTime: 2.6
   mainFOV: 0.33
   weaponFOV: 0.03

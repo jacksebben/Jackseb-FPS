@@ -134,6 +134,9 @@ namespace Com.Jackseb.FPS
 				case EventCodes.ChangeStat:
 					ChangeStat_R(o);
 					break;
+				case EventCodes.NewMatch:
+					NewMatch_R();
+					break;
 			}
 		}
 
@@ -321,7 +324,7 @@ namespace Com.Jackseb.FPS
 			Scoreboard(uiEndgame.Find("Scoreboard"));
 
 			// wait x seconds and then return to main menu
-			StartCoroutine(End(10f));
+			StartCoroutine(End(6f));
 		}
 
 		#endregion

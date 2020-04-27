@@ -685,7 +685,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &4152585652078937451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadout:
-  - {fileID: 11400000, guid: 834beb3053a48144a81e96f9296d0267, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a940111d561716e4a9d68ad810676dfd, type: 2}
   - {fileID: 11400000, guid: 73abaceea91da15499b4d06c41ec9161, type: 2}
   currentGunData: {fileID: 0}
@@ -769,10 +769,11 @@ MonoBehaviour:
     type: 3}
   canBeShot:
     serializedVersion: 2
-    m_Bits: 2355
+    m_Bits: 2353
   sfx: {fileID: 3202653730900408649}
   hitmarkerSound: {fileID: 8300000, guid: 2573b0fa140aa884c9d0d77f444b5306, type: 3}
   equipSound: {fileID: 8300000, guid: e31867b078871fd4da08b55dfc868c8c, type: 3}
+  emptyClip: {fileID: 8300000, guid: 55b44a32b4993f042bad1c582c6ef7d0, type: 3}
   isAiming: 0
 --- !u!114 &-89469954322888530
 MonoBehaviour:
