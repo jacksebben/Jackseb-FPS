@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Sniper
   m_EditorClassIdentifier: 
   gunName: Sniper
+  slot: 0
+  mustAimFirst: 0
+  playerSpeed: 440
+  playerJump: 20
   damage: 115
   headshotMultiplier: 3.9
   range: 1000
-  clipSize: 10
-  ammo: 30
   burst: 0
   pellets: 1
-  slot: 0
   firerate: 1
   bloom: 100
   movingBloom: 100
@@ -29,17 +30,25 @@ MonoBehaviour:
   recoil: 0.25
   kickback: 0.15
   projectileBased: 0
-  mustAimFirst: 0
   projectile: {fileID: 0}
+  projectileSpeed: 0
   destroyTime: 0
+  maxBounces: 0
   hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 20
   needsReload: 1
+  playSoundIndividually: 0
+  clipSize: 10
+  ammo: 20
   reloadTime: 2.6
-  mainFOV: 0.33
-  weaponFOV: 0.03
+  loadedAnim: {fileID: 0}
+  loadedADSAnim: {fileID: 0}
+  emptyAnim: {fileID: 0}
+  reloadAnim: {fileID: 0}
+  aimingAnim: {fileID: 0}
+  unaimingAnim: {fileID: 0}
   gunshotSound: {fileID: 8300000, guid: 8132aa32c57e6ce4ea4d9815a92b5442, type: 3}
   reloadSound: {fileID: 8300000, guid: 082f22285c29a9043a390745947a48e3, type: 3}
   finishReloadSound: {fileID: 8300000, guid: 0c1a0157babbd8748afcddd941bf79dd, type: 3}
@@ -47,3 +56,5 @@ MonoBehaviour:
   prefab: {fileID: 7269680795320770078, guid: ca0152cfa9496dd469efe24b9d2af9ac, type: 3}
   displayPrefab: {fileID: 7269680795320770078, guid: 03ac23fa7cf9bcb4f8ce6c52924ce0f3,
     type: 3}
+  mainFOV: 0.33
+  weaponFOV: 0.03

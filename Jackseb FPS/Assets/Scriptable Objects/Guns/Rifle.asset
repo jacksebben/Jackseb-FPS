@@ -15,7 +15,9 @@ MonoBehaviour:
   gunName: Rifle
   slot: 0
   mustAimFirst: 0
-  damage: 29
+  playerSpeed: 420
+  playerJump: 20
+  damage: 26
   headshotMultiplier: 3.17
   range: 1000
   burst: 1
@@ -29,16 +31,24 @@ MonoBehaviour:
   kickback: 0.05
   projectileBased: 0
   projectile: {fileID: 0}
+  projectileSpeed: 0
   destroyTime: 0
+  maxBounces: 0
   hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 8
   needsReload: 1
   playSoundIndividually: 0
-  clipSize: 30
-  ammo: 90
+  clipSize: 20
+  ammo: 40
   reloadTime: 2.43
+  loadedAnim: {fileID: 0}
+  loadedADSAnim: {fileID: 0}
+  emptyAnim: {fileID: 0}
+  reloadAnim: {fileID: 0}
+  aimingAnim: {fileID: 0}
+  unaimingAnim: {fileID: 0}
   gunshotSound: {fileID: 8300000, guid: 46a46a6b56eb25a40b91045785d2de9c, type: 3}
   reloadSound: {fileID: 8300000, guid: 7534bc1f3b6c36341b4bdc72655845b8, type: 3}
   finishReloadSound: {fileID: 8300000, guid: c37c7dbdc2ed12f4aa72adacd702510c, type: 3}

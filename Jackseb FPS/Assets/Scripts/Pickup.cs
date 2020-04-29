@@ -7,19 +7,35 @@ namespace Com.Jackseb.FPS
 {
 	public class Pickup : MonoBehaviourPunCallbacks
 	{
-		public Gun weapon;
+		public Gun[] weapons;
 		public float cooldown;
 		public GameObject gunDisplay;
 		public List<GameObject> targets;
 
+		public bool randomWeapons;
 		public bool isDisabled;
+
 		private float wait;
+		private Gun currentWeapon;
 
 		private void Start()
 		{
+			InstantiateWeapon();
+		}
+
+		void InstantiateWeapon()
+		{
 			foreach (Transform t in gunDisplay.transform) Destroy(t.gameObject);
 
-			GameObject newDisplay = Instantiate(weapon.displayPrefab, gunDisplay.transform.position, gunDisplay.transform.rotation) as GameObject;
+			if (randomWeapons)
+			{
+				currentWeapon = weapons[Random.Range(0, weapons.Length)];
+			}
+			else
+			{
+				currentWeapon = weapons[0];
+			}
+			GameObject newDisplay = Instantiate(currentWeapon.displayPrefab, gunDisplay.transform.position, gunDisplay.transform.rotation) as GameObject;
 			newDisplay.transform.SetParent(gunDisplay.transform);
 		}
 
@@ -47,7 +63,7 @@ namespace Com.Jackseb.FPS
 			if (other.gameObject.tag.Equals("Player"))
 			{
 				Weapon weaponController = other.transform.root.gameObject.GetComponent<Weapon>();
-				weaponController.photonView.RPC("PickupWeapon", RpcTarget.AllBuffered, weapon.name);
+				weaponController.photonView.RPC("PickupWeapon", RpcTarget.AllBuffered, currentWeapon.name);
 				photonView.RPC("Disable", RpcTarget.AllBuffered);
 			}
 		}
@@ -67,6 +83,8 @@ namespace Com.Jackseb.FPS
 			wait = 0;
 
 			foreach (GameObject a in targets) a.SetActive(true);
+
+			InstantiateWeapon();
 		}
 	}
 }

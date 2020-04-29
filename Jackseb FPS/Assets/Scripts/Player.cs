@@ -33,6 +33,8 @@ namespace Com.Jackseb.FPS
 		public GameObject standingCollider;
 		public GameObject crouchingCollider;
 
+		private GameObject savedPlayer = null;
+
 		private Transform uiHealthBar;
 		private Text uiAmmo;
 		private Text uiAmmoFrame;
@@ -165,7 +167,7 @@ namespace Com.Jackseb.FPS
 			bool pause = Input.GetKeyDown(KeyCode.Escape);
 
 			// States
-			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.5f, ground);
+			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.2f, ground);
 			bool isJumping = jump && isGrounded;
 			jumped = !isGrounded;
 			//bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
@@ -199,7 +201,9 @@ namespace Com.Jackseb.FPS
 			if (isJumping)
 			{
 				if (crouched) photonView.RPC("SetCrouch", RpcTarget.AllBuffered, false);
-				rig.AddForce(Vector3.up * jumpForce);
+				if (r_Weapon.currentGunData != null) jumpForce = r_Weapon.currentGunData.playerJump;
+
+				rig.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
 			}
 
 			// Headbob
@@ -261,7 +265,7 @@ namespace Com.Jackseb.FPS
 			bool aim = Input.GetMouseButton(1);
 
 			// States
-			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.5f, ground);
+			bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.2f, ground);
 			bool isJumping = jump && isGrounded;
 			jumped = !isGrounded;
 			//bool isSprinting = sprint && t_vMove > 0 && !isJumping && isGrounded;
@@ -284,6 +288,7 @@ namespace Com.Jackseb.FPS
 			// Movement
 			Vector3 t_direction = Vector3.zero;
 			float t_adjustedSpeed = speed;
+			if (r_Weapon.currentGunData != null) t_adjustedSpeed = r_Weapon.currentGunData.playerSpeed;
 
 			t_direction = new Vector3(t_hMove, 0, t_vMove);
 			t_direction.Normalize();
@@ -322,7 +327,7 @@ namespace Com.Jackseb.FPS
 			// Aiming
 			isAiming = r_Weapon.Aim(isAiming);
 
-			//Camera Stuff
+			// Camera Stuff
 			if (isSprinting)
 			{
 				normalCam.fieldOfView = Mathf.Lerp(normalCam.fieldOfView, baseFOV * sprintFOVModifier, Time.deltaTime * 8f);
@@ -349,6 +354,37 @@ namespace Com.Jackseb.FPS
 				normalCamTarget = Vector3.MoveTowards(normalCam.transform.localPosition, origin, Time.deltaTime * 4f);
 				weaponCamTarget = Vector3.MoveTowards(weaponCam.transform.localPosition, origin, Time.deltaTime * 4f);
 			}
+
+			// Show and hide username
+			//RaycastHit t_hit = new RaycastHit();
+
+			//if (photonView.IsMine)
+			//{
+			//	if (Physics.Raycast(normalCam.transform.position, normalCam.transform.forward, out t_hit, 1000f))
+			//	{
+			//		if (t_hit.collider.gameObject.layer == 11)
+			//		{
+			//			if (savedPlayer == null)
+			//			{
+			//				savedPlayer = t_hit.collider.transform.root.gameObject;
+			//			}
+			//			else
+			//			{
+			//				savedPlayer.transform.Find("Username").GetComponent<MeshRenderer>().enabled = true;
+			//				savedPlayer.transform.Find("Username Frame").GetComponent<MeshRenderer>().enabled = true;
+			//			}
+			//		}
+			//		else
+			//		{
+			//			if (savedPlayer != null)
+			//			{
+			//				savedPlayer.transform.Find("Username").GetComponent<MeshRenderer>().enabled = false;
+			//				savedPlayer.transform.Find("Username Frame").GetComponent<MeshRenderer>().enabled = false;
+			//				savedPlayer = null;
+			//			}
+			//		}
+			//	}
+			//}
 		}
 
 		private void LateUpdate()
@@ -472,6 +508,10 @@ namespace Com.Jackseb.FPS
 						r_GameManager.ChangeStat_S(p_actor, 0, 1);
 
 					PhotonNetwork.Destroy(gameObject);
+				}
+				else if (currentHealth > 100)
+				{
+					currentHealth = 100;
 				}
 			}
 		}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 using Photon.Pun;
 using Photon.Realtime;
 using PhotonHash = ExitGames.Client.Photon.Hashtable;
@@ -68,6 +69,7 @@ namespace Com.Jackseb.FPS
 		public GameObject tabMain;
 		public GameObject tabRooms;
 		public GameObject tabCreate;
+		public GameObject tabOptions;
 
 		public GameObject buttonRoomPrefab;
 
@@ -83,7 +85,10 @@ namespace Com.Jackseb.FPS
 		public Text maxPlayerValue;
 		public Slider killCountSlider;
 		public Text killCountValue;
+		public Slider volumeSlider;
+		public Text volumeValue;
 		public static ProfileData myProfile = new ProfileData();
+		public AudioMixer mixer;
 
 		public MapData[] maps;
 		private int currentMap = 0;
@@ -104,6 +109,8 @@ namespace Com.Jackseb.FPS
 
 			myProfile = Data.LoadProfile();
 			usernameField.text = myProfile.username;
+			if (PlayerPrefs.HasKey("volumeSlider")) volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
+			else volumeSlider.value = 100;
 
 			Connect();
 		}
@@ -119,6 +126,8 @@ namespace Com.Jackseb.FPS
 			{
 				regionText.GetComponent<Text>().text = "US-West";
 			}
+
+			mixer.SetFloat("masterVol", (PlayerPrefs.GetFloat("volumeSlider") * 0.8f) - 80);
 		}
 
 		public override void OnConnectedToMaster()
@@ -212,11 +221,19 @@ namespace Com.Jackseb.FPS
 			killCountValue.text = Mathf.RoundToInt(p_value * 5).ToString();
 		}
 
+		public void ChangeVolumeSlider(float p_value)
+		{
+			volumeValue.text = Mathf.RoundToInt(p_value).ToString() + "%";
+			mixer.SetFloat("masterVol", (p_value * 0.8f) - 80);
+			PlayerPrefs.SetFloat("volumeSlider", volumeSlider.value);
+		}
+
 		public void TabCloseAll()
 		{
 			tabMain.SetActive(false);
 			tabRooms.SetActive(false);
 			tabCreate.SetActive(false);
+			tabOptions.SetActive(false);
 		}
 
 		public void TabOpenMain()
@@ -246,6 +263,16 @@ namespace Com.Jackseb.FPS
 
 			killCountSlider.value = 5;
 			killCountValue.text = Mathf.RoundToInt(killCountSlider.value * 5).ToString();
+		}
+
+		public void TabOpenOptions()
+		{
+			TabCloseAll();
+			tabOptions.SetActive(true);
+
+			if (PlayerPrefs.HasKey("volumeSlider")) volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
+			else volumeSlider.value = 100;
+
 		}
 
 		private void ClearRoomList()

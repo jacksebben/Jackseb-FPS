@@ -50,34 +50,16 @@ namespace Com.Jackseb.FPS
 			hitmarkerImage.color = new Color(1, 1, 1, 0);
 			if (loadout[0] != null)
 			{
-				Equip(0);
+				photonView.RPC("Equip", RpcTarget.AllBuffered, 0);
 
 			}
 			else if (loadout[1] != null)
 			{
-				Equip(1);
+				photonView.RPC("Equip", RpcTarget.AllBuffered, 1);
 			}
 			else if (loadout[2] != null)
 			{
-				Equip(2);
-			}
-		}
-
-		void CheckScrollWheel(int p_ind, float p_multiplier)
-		{
-			Debug.Log(Input.GetAxisRaw("Mouse ScrollWheel"));
-			int scrollInd = p_ind - Mathf.RoundToInt(p_multiplier * 10);
-
-			if (scrollInd < 0) scrollInd = 2;
-			if (scrollInd > 2) scrollInd = 0;
-
-			if (loadout[scrollInd] != null)
-			{
-				photonView.RPC("Equip", RpcTarget.AllBuffered, scrollInd);
-			}
-			else
-			{
-				CheckScrollWheel(scrollInd, p_multiplier);
+				photonView.RPC("Equip", RpcTarget.AllBuffered, 2);
 			}
 		}
 
@@ -102,11 +84,6 @@ namespace Com.Jackseb.FPS
 			if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha3) && loadout[2] != null)
 			{
 				photonView.RPC("Equip", RpcTarget.AllBuffered, 2);
-			}
-
-			if (photonView.IsMine && Input.GetAxisRaw("Mouse ScrollWheel") != 0)
-			{
-				CheckScrollWheel(currentIndex, Input.GetAxisRaw("Mouse ScrollWheel"));
 			}
 
 			if (currentWeapon != null)
@@ -153,6 +130,19 @@ namespace Com.Jackseb.FPS
 
 				// Weapon position elasticity
 				currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 8f);
+			}
+
+			// Animation
+			if (currentWeapon.GetComponent<Animator>() != null)
+			{
+				currentWeapon.GetComponent<Animator>().SetFloat("FOV", transform.Find("Cameras/Normal Camera").GetComponent<Camera>().fieldOfView);
+				currentWeapon.GetComponent<Animator>().SetBool("HasAmmo", (currentGunData.GetClip() > 0));
+				currentWeapon.GetComponent<Animator>().SetBool("IsReloading", isReloading);
+			}
+
+			if (currentGunData.projectileBased)
+			{
+				currentWeapon.transform.Find("Anchor/Design/Projectile/ProjectileAnim").GetComponent<Animator>().SetFloat("FOV", transform.Find("Cameras/Normal Camera").GetComponent<Camera>().fieldOfView);
 			}
 
 			if (photonView.IsMine)
@@ -204,14 +194,18 @@ namespace Com.Jackseb.FPS
 		{
 			if (photonView.IsMine)
 			{
-				StartCoroutine(Reload(currentGunData.reloadTime, currentGunData.playSoundIndividually));
+				lastReload = StartCoroutine(Reload(currentGunData.reloadTime, currentGunData.playSoundIndividually));
 			}
 		}
 
 		IEnumerator Reload(float p_wait, bool individual)
 		{
 			isReloading = true;
-			currentWeapon.SetActive(false);
+
+			if (!currentWeapon.GetComponent<Animator>())
+			{
+				currentWeapon.SetActive(false);
+			}
 
 			if (individual)
 			{
@@ -368,13 +362,6 @@ namespace Com.Jackseb.FPS
 				{
 					if (Physics.BoxCast(transform.position, new Vector3(0.5f, 1, 0.5f), transform.Find("Cameras/Normal Camera").forward, out t_hit, transform.Find("Cameras/Normal Camera").localRotation, currentGunData.range, canBeShot))
 					{
-						if (t_hit.collider.gameObject.layer != 11)
-						{
-							GameObject t_newHole = Instantiate(bulletholePrefab, t_hit.point + t_hit.normal * 0.001f, Quaternion.identity) as GameObject;
-							t_newHole.transform.LookAt(t_hit.point + t_hit.normal);
-							Destroy(t_newHole, 5f);
-						}
-
 						if (photonView.IsMine)
 						{
 							// Shooting other player on network
@@ -385,7 +372,8 @@ namespace Com.Jackseb.FPS
 								if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
 
 								// Give damage
-								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, 1);
 
 								// Show hitmarker
 								hitmarkerImage.color = Color.white;
@@ -424,7 +412,8 @@ namespace Com.Jackseb.FPS
 								if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
 
 								// Give damage
-								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, loadout[currentIndex].damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
+								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, 1f);
 
 								// Show hitmarker
 								hitmarkerImage.color = Color.white;
@@ -439,6 +428,9 @@ namespace Com.Jackseb.FPS
 			// Sound
 			sfx.pitch = 1 - currentGunData.pitchRandomization + Random.Range(-currentGunData.pitchRandomization, currentGunData.pitchRandomization);
 			sfx.PlayOneShot(currentGunData.gunshotSound);
+
+			// Animation
+			currentWeapon.GetComponent<Animator>().Play("Shoot", 0, 0);
 
 			// Gun FX
 			currentWeapon.transform.Rotate(-currentGunData.recoil, 0, 0);
@@ -464,7 +456,7 @@ namespace Com.Jackseb.FPS
 			projectile.transform.position = transform.Find("Cameras/Normal Camera").position + (transform.Find("Cameras/Normal Camera").forward * 2);
 			projectile.transform.LookAt(transform.position + direction);
 			Rigidbody rb = projectile.GetComponent<Rigidbody>();
-			rb.velocity = direction * 40;
+			rb.velocity = direction * currentGunData.projectileSpeed;
 
 			projectile.GetComponent<ProjectileHelper>().projParent = newWeapon.projectile;
 

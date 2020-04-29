@@ -15,6 +15,10 @@ namespace Com.Jackseb.FPS
 		public int slot;
 		[Tooltip("Must the gun be aimed down sight in order to shoot?")]
 		public bool mustAimFirst;
+		[Tooltip("How fast the player moves when holding this weapon")]
+		public int playerSpeed;
+		[Tooltip("How high the player jumps when holding this weapon")]
+		public int playerJump;
 
 
 		[Header("Damage")]
@@ -22,6 +26,8 @@ namespace Com.Jackseb.FPS
 		public int damage;
 		[Tooltip("How much damage will be multiplied to get headshot damage")]
 		public float headshotMultiplier;
+		[Tooltip("How much health you regain after killing with it")]
+		public int lifeSteal;
 		[Tooltip("How far a gun can be shot")]
 		public float range;
 		[Tooltip("0 = semi, 1 = automatic, 2 = burst")]
@@ -52,6 +58,8 @@ namespace Com.Jackseb.FPS
 		public bool projectileBased;
 		[Tooltip("The projectile the gun shoots")]
 		public Projectile projectile;
+		[Tooltip("How fast does the projectile move in the air?")]
+		public int projectileSpeed;
 		[Tooltip("How many seconds until the projectile despawns")]
 		public int destroyTime;
 		[Tooltip("How many bounces until the projectile despawns")]

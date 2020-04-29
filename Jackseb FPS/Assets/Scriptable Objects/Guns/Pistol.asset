@@ -15,36 +15,40 @@ MonoBehaviour:
   gunName: Pistol
   slot: 1
   mustAimFirst: 0
-  damage: 29
-  headshotMultiplier: 1.93
+  playerSpeed: 480
+  playerJump: 20
+  damage: 22
+  headshotMultiplier: 1.68
   range: 1000
   burst: 0
   pellets: 1
   firerate: 0.15
-  bloom: 2
-  movingBloom: 10
+  bloom: 10
+  movingBloom: 30
   jumpingBloom: 50
   ADSBloomMultipler: 0.75
   recoil: 7
   kickback: 0.15
   projectileBased: 0
   projectile: {fileID: 0}
+  projectileSpeed: 0
   destroyTime: 0
+  maxBounces: 0
   hitSound: {fileID: 0}
   canADS: 1
   boxCast: 0
   aimSpeed: 12
   needsReload: 1
   playSoundIndividually: 0
-  clipSize: 20
-  ammo: 120
+  clipSize: 12
+  ammo: 24
   reloadTime: 2.27
   gunshotSound: {fileID: 8300000, guid: be4b147cbc9d1744d973185b55636afd, type: 3}
   reloadSound: {fileID: 8300000, guid: 6e7c081f69773244eacce1b4981ca28c, type: 3}
   finishReloadSound: {fileID: 8300000, guid: e21754453e8502442bc2b6f9bba02182, type: 3}
   pitchRandomization: 0.025
   prefab: {fileID: 7269680795320770078, guid: 6145a4b6e5a32df498422d46d7245a1e, type: 3}
-  displayPrefab: {fileID: 7269680795320770078, guid: 03c4c3c9ff60e5a4db0cc6dbf695921e,
+  displayPrefab: {fileID: 7269680795320770078, guid: 11f71bd6d8d2f47479fe98968029d06f,
     type: 3}
   mainFOV: 0.7
   weaponFOV: 0.6

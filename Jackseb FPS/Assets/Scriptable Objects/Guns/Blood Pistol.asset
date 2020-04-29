@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf76bd93fe576743be8a174ef2d3b32, type: 3}
+  m_Name: Blood Pistol
+  m_EditorClassIdentifier: 
+  gunName: Blood Pistol
+  slot: 1
+  mustAimFirst: 0
+  playerSpeed: 480
+  playerJump: 20
+  damage: 18
+  headshotMultiplier: 1
+  lifeSteal: -18
+  range: 1000
+  burst: 0
+  pellets: 1
+  firerate: 0.5
+  bloom: 5
+  movingBloom: 15
+  jumpingBloom: 25
+  ADSBloomMultipler: 0.75
+  recoil: 7
+  kickback: 0.15
+  projectileBased: 0
+  projectile: {fileID: 0}
+  projectileSpeed: 0
+  destroyTime: 0
+  maxBounces: 0
+  hitSound: {fileID: 0}
+  canADS: 1
+  boxCast: 0
+  aimSpeed: 12
+  needsReload: 1
+  playSoundIndividually: 0
+  clipSize: 8
+  ammo: 16
+  reloadTime: 2.4
+  gunshotSound: {fileID: 8300000, guid: be4b147cbc9d1744d973185b55636afd, type: 3}
+  reloadSound: {fileID: 8300000, guid: 6e7c081f69773244eacce1b4981ca28c, type: 3}
+  finishReloadSound: {fileID: 8300000, guid: e21754453e8502442bc2b6f9bba02182, type: 3}
+  pitchRandomization: 0.025
+  prefab: {fileID: 7269680795320770078, guid: 9f0bfd93013c49f439f49e3c8a54a5fb, type: 3}
+  displayPrefab: {fileID: 7269680795320770078, guid: 582b11ecc0d250348ba57d3dc5492461,
+    type: 3}
+  mainFOV: 0.7
+  weaponFOV: 0.6

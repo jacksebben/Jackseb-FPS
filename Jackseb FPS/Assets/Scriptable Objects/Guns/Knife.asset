@@ -13,34 +13,47 @@ MonoBehaviour:
   m_Name: Knife
   m_EditorClassIdentifier: 
   gunName: Knife
+  slot: 2
+  mustAimFirst: 0
+  playerSpeed: 500
+  playerJump: 20
   damage: 999
   headshotMultiplier: 1
   range: 1.5
-  clipSize: 0
-  ammo: 0
   burst: 1
   pellets: 1
-  slot: 2
   firerate: 0.55
   bloom: 0
   movingBloom: 0
   jumpingBloom: 0
+  ADSBloomMultipler: 0
   recoil: -30
   kickback: -2
   projectileBased: 0
-  mustAimFirst: 0
   projectile: {fileID: 0}
+  projectileSpeed: 0
   destroyTime: 0
+  maxBounces: 0
+  hitSound: {fileID: 0}
   canADS: 0
   boxCast: 1
   aimSpeed: 0
-  canReload: 0
+  needsReload: 0
+  playSoundIndividually: 0
+  clipSize: 0
+  ammo: 0
   reloadTime: 0
-  mainFOV: 0.7
-  weaponFOV: 0.7
+  loadedAnim: {fileID: 0}
+  loadedADSAnim: {fileID: 0}
+  emptyAnim: {fileID: 0}
+  reloadAnim: {fileID: 0}
+  aimingAnim: {fileID: 0}
+  unaimingAnim: {fileID: 0}
   gunshotSound: {fileID: 8300000, guid: 563218fe2e1baf24891f2eef20c1d524, type: 3}
   reloadSound: {fileID: 0}
   finishReloadSound: {fileID: 0}
   pitchRandomization: 0
   prefab: {fileID: 7269680795320770078, guid: c9c01d04b10aff04cb9f1123f18168de, type: 3}
   displayPrefab: {fileID: 0}
+  mainFOV: 0.7
+  weaponFOV: 0.7

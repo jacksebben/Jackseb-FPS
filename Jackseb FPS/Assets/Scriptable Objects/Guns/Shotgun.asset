@@ -15,20 +15,23 @@ MonoBehaviour:
   gunName: Shotgun
   slot: 0
   mustAimFirst: 0
+  playerSpeed: 460
+  playerJump: 20
   damage: 7
   headshotMultiplier: 2
   range: 1000
   burst: 0
   pellets: 10
-  firerate: 0.82
-  bloom: 50
-  movingBloom: 70
-  jumpingBloom: 90
-  ADSBloomMultipler: 0.75
+  firerate: 0.625
+  bloom: 40
+  movingBloom: 60
+  jumpingBloom: 80
+  ADSBloomMultipler: 0.65
   recoil: 15
   kickback: 0.2
   projectileBased: 0
   projectile: {fileID: 0}
+  projectileSpeed: 0
   destroyTime: 0
   maxBounces: 0
   hitSound: {fileID: 0}
@@ -38,8 +41,14 @@ MonoBehaviour:
   needsReload: 1
   playSoundIndividually: 1
   clipSize: 8
-  ammo: 32
+  ammo: 16
   reloadTime: 0.32
+  loadedAnim: {fileID: 0}
+  loadedADSAnim: {fileID: 0}
+  emptyAnim: {fileID: 0}
+  reloadAnim: {fileID: 0}
+  aimingAnim: {fileID: 0}
+  unaimingAnim: {fileID: 0}
   gunshotSound: {fileID: 8300000, guid: fe06fb2e006b3644dbb28fa74ae24c1d, type: 3}
   reloadSound: {fileID: 8300000, guid: 730957f75e2d9c543864dbaa8afe6457, type: 3}
   finishReloadSound: {fileID: 8300000, guid: 89e51dbf742dc2a438307afd876a2a9e, type: 3}
