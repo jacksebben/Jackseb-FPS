@@ -33,9 +33,11 @@ namespace Com.Jackseb.FPS
 		public GameObject standingCollider;
 		public GameObject crouchingCollider;
 
-		private GameObject savedPlayer = null;
+		// For the username text
+		//private GameObject savedPlayer = null;
 
 		private Transform uiHealthBar;
+		private Text uiHealthAmount;
 		private Text uiAmmo;
 		private Text uiAmmoFrame;
 		private Text uiUsername;
@@ -134,6 +136,7 @@ namespace Com.Jackseb.FPS
 			if (photonView.IsMine)
 			{
 				uiHealthBar = GameObject.Find("HUD/Health/Bar").transform;
+				uiHealthAmount = GameObject.Find("HUD/Health/Health Amount").GetComponent<Text>();
 				uiAmmo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
 				uiAmmoFrame = GameObject.Find("HUD/Ammo/Frame").GetComponent<Text>();
 				uiUsername = GameObject.Find("HUD/Health/Username").GetComponent<Text>();
@@ -429,6 +432,7 @@ namespace Com.Jackseb.FPS
 			float t_healthRatio = (float)currentHealth / (float)maxHealth;
 
 			uiHealthBar.localScale = Vector3.Lerp(uiHealthBar.localScale, new Vector3(t_healthRatio, 1, 1), Time.deltaTime * 8f);
+			uiHealthAmount.text = Mathf.RoundToInt(uiHealthBar.localScale.x * 100).ToString();
 
 			if (currentHealth >= 50 && currentHealth <= 100)
 			{
@@ -497,7 +501,10 @@ namespace Com.Jackseb.FPS
 			{
 				currentHealth -= Mathf.RoundToInt(p_damage * p_multi);
 				RefreshHealthBar();
-				StartCoroutine(DamageIndicator(0.1f));
+				if (p_damage > 0)
+				{
+					StartCoroutine(DamageIndicator(0.1f));
+				}
 
 				if (currentHealth <= 0)
 				{

@@ -94,6 +94,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 834beb3053a48144a81e96f9296d0267, type: 2}
   - {fileID: 11400000, guid: 8ecfd6ce9d8df8042a82f2927662e4b9, type: 2}
   - {fileID: 11400000, guid: b826d0570923f2f48a90498604b9c81d, type: 2}
+  - {fileID: 11400000, guid: 9d93222c8725a2d4dae788c57d727921, type: 2}
   cooldown: 10
   gunDisplay: {fileID: 4988099646077787350}
   targets:

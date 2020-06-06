@@ -17,13 +17,13 @@ MonoBehaviour:
   mustAimFirst: 0
   playerSpeed: 480
   playerJump: 20
-  damage: 18
-  headshotMultiplier: 1
-  lifeSteal: -18
+  damage: 20
+  headshotMultiplier: 1.68
+  lifeSteal: -20
   range: 1000
   burst: 0
   pellets: 1
-  firerate: 0.5
+  firerate: 0.25
   bloom: 5
   movingBloom: 15
   jumpingBloom: 25

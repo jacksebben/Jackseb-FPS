@@ -17,8 +17,9 @@ MonoBehaviour:
   mustAimFirst: 0
   playerSpeed: 500
   playerJump: 20
-  damage: 999
-  headshotMultiplier: 1
+  damage: 50
+  headshotMultiplier: 2
+  lifeSteal: 0
   range: 1.5
   burst: 1
   pellets: 1
@@ -43,12 +44,6 @@ MonoBehaviour:
   clipSize: 0
   ammo: 0
   reloadTime: 0
-  loadedAnim: {fileID: 0}
-  loadedADSAnim: {fileID: 0}
-  emptyAnim: {fileID: 0}
-  reloadAnim: {fileID: 0}
-  aimingAnim: {fileID: 0}
-  unaimingAnim: {fileID: 0}
   gunshotSound: {fileID: 8300000, guid: 563218fe2e1baf24891f2eef20c1d524, type: 3}
   reloadSound: {fileID: 0}
   finishReloadSound: {fileID: 0}

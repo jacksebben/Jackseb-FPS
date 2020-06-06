@@ -142,7 +142,10 @@ namespace Com.Jackseb.FPS
 
 			if (currentGunData.projectileBased)
 			{
-				currentWeapon.transform.Find("Anchor/Design/Projectile/ProjectileAnim").GetComponent<Animator>().SetFloat("FOV", transform.Find("Cameras/Normal Camera").GetComponent<Camera>().fieldOfView);
+				if (currentWeapon.transform.Find("Anchor/Design/Projectile/ProjectileAnim") != null)
+				{
+					currentWeapon.transform.Find("Anchor/Design/Projectile/ProjectileAnim").GetComponent<Animator>().SetFloat("FOV", transform.Find("Cameras/Normal Camera").GetComponent<Camera>().fieldOfView);
+				}
 			}
 
 			if (photonView.IsMine)
@@ -172,11 +175,12 @@ namespace Com.Jackseb.FPS
 			if (other.gameObject.layer == 12)
 			{
 				// find the weapon from a library
-				Projectile newProjectile = ProjectileLibrary.FindProjectile(other.gameObject.name);
+				Projectile newProjectile = ProjectileLibrary.FindProjectile(other.transform.root.gameObject.name);
 
 				if (photonView.IsMine)
 				{
 					ProjectileHelper script = other.transform.root.GetComponent<ProjectileHelper>();
+					// ^ what was this for...?
 					photonView.RPC("TakeDamage", RpcTarget.AllBuffered, newProjectile.GetDamage(), newProjectile.GetActorNumber(), newProjectile.GetMultiplier());
 				}
 
@@ -369,11 +373,11 @@ namespace Com.Jackseb.FPS
 							{
 								float t_multiplier = 1;
 
-								if (t_hit.collider.gameObject.name == "Head") t_multiplier = currentGunData.headshotMultiplier;
+								if (Vector3.Distance(transform.position, t_hit.collider.transform.root.Find("Misc/Front").position) > Vector3.Distance(transform.position, t_hit.collider.transform.root.Find("Misc/Back").position)) t_multiplier = currentGunData.headshotMultiplier;
 
 								// Give damage
 								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
-								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, 1);
+								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
 
 								// Show hitmarker
 								hitmarkerImage.color = Color.white;
@@ -413,7 +417,7 @@ namespace Com.Jackseb.FPS
 
 								// Give damage
 								t_hit.collider.transform.root.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.damage, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
-								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, 1f);
+								photonView.RPC("TakeDamage", RpcTarget.AllBuffered, currentGunData.lifeSteal, PhotonNetwork.LocalPlayer.ActorNumber, t_multiplier);
 
 								// Show hitmarker
 								hitmarkerImage.color = Color.white;
@@ -430,7 +434,10 @@ namespace Com.Jackseb.FPS
 			sfx.PlayOneShot(currentGunData.gunshotSound);
 
 			// Animation
-			currentWeapon.GetComponent<Animator>().Play("Shoot", 0, 0);
+			if (currentWeapon.GetComponent<Animator>() != null)
+			{
+				currentWeapon.GetComponent<Animator>().Play("Shoot", 0, 0);
+			}
 
 			// Gun FX
 			currentWeapon.transform.Rotate(-currentGunData.recoil, 0, 0);
@@ -470,10 +477,19 @@ namespace Com.Jackseb.FPS
 
 		public void RefreshAmmo(Text p_text, Text p_textFrame)
 		{
-			if (loadout[currentIndex] != null)
+			if (currentGunData != null)
 			{
-				int t_clip = loadout[currentIndex].GetClip();
-				int t_stash = loadout[currentIndex].GetStash();
+				int t_clip = currentGunData.GetClip();
+				int t_stash = currentGunData.GetStash();
+
+				if (t_clip <= (currentGunData.clipSize * 0.25))
+				{
+					p_text.color = Color.red;
+				}
+				else
+				{
+					p_text.color = Color.white;
+				}
 
 				p_text.text = t_clip.ToString("00") + " / " + t_stash.ToString("00");
 				p_textFrame.text = t_clip.ToString("00") + " / " + t_stash.ToString("00");

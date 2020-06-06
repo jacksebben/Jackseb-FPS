@@ -87,6 +87,8 @@ namespace Com.Jackseb.FPS
 		public Text killCountValue;
 		public Slider volumeSlider;
 		public Text volumeValue;
+		public Slider sensSlider;
+		public Text sensValue;
 		public static ProfileData myProfile = new ProfileData();
 		public AudioMixer mixer;
 
@@ -109,15 +111,19 @@ namespace Com.Jackseb.FPS
 
 			myProfile = Data.LoadProfile();
 			usernameField.text = myProfile.username;
+
 			if (PlayerPrefs.HasKey("volumeSlider")) volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
 			else volumeSlider.value = 100;
+
+			if (PlayerPrefs.HasKey("sensSlider")) sensSlider.value = PlayerPrefs.GetFloat("sensSlider");
+			else sensSlider.value = 60;
 
 			Connect();
 		}
 
 		private void Update()
 		{
-			versionText.GetComponent<Text>().text = "Version " + version;
+			versionText.GetComponent<Text>().text = "v" + version;
 			if (PhotonNetwork.CloudRegion == "us")
 			{
 				regionText.GetComponent<Text>().text = "US-East";
@@ -228,6 +234,12 @@ namespace Com.Jackseb.FPS
 			PlayerPrefs.SetFloat("volumeSlider", volumeSlider.value);
 		}
 
+		public void ChangeSensSlider(float p_value)
+		{
+			sensValue.text = (p_value / 10).ToString("0.0");
+			PlayerPrefs.SetFloat("sensSlider", sensSlider.value);
+		}
+
 		public void TabCloseAll()
 		{
 			tabMain.SetActive(false);
@@ -269,10 +281,6 @@ namespace Com.Jackseb.FPS
 		{
 			TabCloseAll();
 			tabOptions.SetActive(true);
-
-			if (PlayerPrefs.HasKey("volumeSlider")) volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
-			else volumeSlider.value = 100;
-
 		}
 
 		private void ClearRoomList()

@@ -42,8 +42,8 @@ MonoBehaviour:
   needsReload: 1
   playSoundIndividually: 0
   clipSize: 1
-  ammo: 0
-  reloadTime: 0
+  ammo: 1
+  reloadTime: 2.2
   gunshotSound: {fileID: 8300000, guid: be4b147cbc9d1744d973185b55636afd, type: 3}
   reloadSound: {fileID: 8300000, guid: 6e7c081f69773244eacce1b4981ca28c, type: 3}
   finishReloadSound: {fileID: 8300000, guid: e21754453e8502442bc2b6f9bba02182, type: 3}

@@ -41,6 +41,9 @@ namespace Com.Jackseb.FPS
 			if (Pause.paused) return;
 
 			weaponCam.rotation = normalCam.rotation;
+
+			xSensitivity = PlayerPrefs.GetFloat("sensSlider");
+			ySensitivity = PlayerPrefs.GetFloat("sensSlider");
 		}
 
 		private void FixedUpdate()
