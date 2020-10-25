@@ -61,7 +61,7 @@ namespace Com.Jackseb.FPS
 		[Tooltip("How fast does the projectile move in the air?")]
 		public int projectileSpeed;
 		[Tooltip("How many seconds until the projectile despawns")]
-		public int destroyTime;
+		public float destroyTime;
 		[Tooltip("How many bounces until the projectile despawns")]
 		public int maxBounces;
 		[Tooltip("What plays when the projectile hits something")]

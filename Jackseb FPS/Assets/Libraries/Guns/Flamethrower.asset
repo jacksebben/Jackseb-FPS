@@ -33,7 +33,7 @@ MonoBehaviour:
   projectileBased: 1
   projectile: {fileID: 11400000, guid: 8ba08a30e8f5bee46bfe63b387c99344, type: 2}
   projectileSpeed: 11
-  destroyTime: 2
+  destroyTime: 1.25
   maxBounces: 1
   hitSound: {fileID: 8300000, guid: e60282173169b0e4aad5c2a5adda6682, type: 3}
   canADS: 0

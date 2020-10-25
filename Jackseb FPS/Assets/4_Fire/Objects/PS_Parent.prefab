@@ -4799,7 +4799,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1652784949999524}
   serializedVersion: 6
   lengthInSec: 1
-  simulationSpeed: 1
+  simulationSpeed: 1.25
   stopAction: 0
   cullingMode: 1
   ringBufferMode: 0
@@ -4873,7 +4873,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -9553,7 +9553,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1706519164850726}
   serializedVersion: 6
   lengthInSec: 1
-  simulationSpeed: 1
+  simulationSpeed: 1.25
   stopAction: 0
   cullingMode: 1
   ringBufferMode: 0
@@ -9627,7 +9627,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -14381,7 +14381,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 1.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -19061,7 +19061,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1911683160194432}
   serializedVersion: 6
   lengthInSec: 1
-  simulationSpeed: 1
+  simulationSpeed: 1.25
   stopAction: 0
   cullingMode: 1
   ringBufferMode: 0
@@ -19135,7 +19135,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
