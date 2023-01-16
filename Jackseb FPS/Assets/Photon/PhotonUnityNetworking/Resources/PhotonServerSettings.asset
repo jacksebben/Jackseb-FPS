@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: ee40604d-2886-4514-979d-22c1bcd3a7ef
+    AppIdRealtime: 
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -32,17 +32,17 @@ MonoBehaviour:
   - ClickRpc
   - DestroyRpc
   - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - Equip
-  - Shoot
-  - TakeDamage
-  - SetCrouch
   - Disable
+  - Equip
+  - Fire
   - PickupWeapon
-  - SyncProfile
-  - SprintSound
   - ReloadRPC
+  - RespawnSpaceship
+  - SetCrouch
+  - Shoot
   - ShootProjectile
+  - SprintSound
+  - SyncProfile
+  - TakeDamage
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
+  ShowSettings: 0
